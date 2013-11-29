@@ -215,9 +215,16 @@ public class Main extends Activity {
 				
 				HttpPost request2 = new HttpPost("https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631");
 				HttpResponse res = client.execute(request2,localContext);
-			    String html = EntityUtils.toString(res.getEntity());
-			    Document document = Jsoup.parse(html);
-			    System.out.println(document.toString());
+				if (res.getStatusLine().getStatusCode() == 200) {
+					String html = EntityUtils.toString(res.getEntity());
+				    Document document = Jsoup.parse(html);
+				    System.out.println("Doc"+document.toString());
+				}
+				else
+				{
+					System.out.println(res.getStatusLine().getStatusCode());
+					System.out.println(res.toString());
+				}
 			} 
 			catch (IOException e)
 			{
