@@ -34,7 +34,17 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
 public class MySSLSocketFactory extends SSLSocketFactory {
-    SSLContext sslContext = SSLContext.getInstance("TLS");
+    private final SSLContext sslContext = SSLContext.getInstance("TLS");
+    
+    /**
+     * Creates a new SSL Socket Factory with the given KeyStore.
+     * 
+     * @param truststore A KeyStore to create the SSL Socket Factory in context of
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
+     * @throws KeyStoreException
+     * @throws UnrecoverableKeyException
+     */
     public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
         super(truststore);
 

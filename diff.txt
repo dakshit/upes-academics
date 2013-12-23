@@ -1,0 +1,290 @@
+diff --git a/.classpath b/.classpath
+index 9b067b4..49f6507 100644
+--- a/.classpath
++++ b/.classpath
+@@ -18,5 +18,6 @@
+ 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
+ 		</accessrules>
+ 	</classpathentry>
++	<classpathentry exported="true" kind="lib" path="C:/Users/shalzz/Documents/Work Space/android-async-http-1.4.4.jar"/>
+ 	<classpathentry kind="output" path="bin/classes"/>
+ </classpath>
+diff --git a/bin/Attendence.apk b/bin/Attendence.apk
+index c3ce9b0..5e064ff 100644
+Binary files a/bin/Attendence.apk and b/bin/Attendence.apk differ
+diff --git a/bin/classes.dex b/bin/classes.dex
+index b1f9d68..6485f2d 100644
+Binary files a/bin/classes.dex and b/bin/classes.dex differ
+diff --git a/bin/classes/com/god/attendence/Main$1.class b/bin/classes/com/god/attendence/Main$1.class
+deleted file mode 100644
+index 28002ec..0000000
+Binary files a/bin/classes/com/god/attendence/Main$1.class and /dev/null differ
+diff --git a/bin/classes/com/god/attendence/Main$CaptchExecution.class b/bin/classes/com/god/attendence/Main$CaptchExecution.class
+deleted file mode 100644
+index 14e1d5f..0000000
+Binary files a/bin/classes/com/god/attendence/Main$CaptchExecution.class and /dev/null differ
+diff --git a/bin/classes/com/god/attendence/Main$LoginExecution.class b/bin/classes/com/god/attendence/Main$LoginExecution.class
+deleted file mode 100644
+index c17f3cf..0000000
+Binary files a/bin/classes/com/god/attendence/Main$LoginExecution.class and /dev/null differ
+diff --git a/bin/classes/com/god/attendence/Main.class b/bin/classes/com/god/attendence/Main.class
+index 5859177..ad411c3 100644
+Binary files a/bin/classes/com/god/attendence/Main.class and b/bin/classes/com/god/attendence/Main.class differ
+diff --git a/src/com/god/attendence/Main.java b/src/com/god/attendence/Main.java
+index d8f5225..7e8bbbd 100644
+--- a/src/com/god/attendence/Main.java
++++ b/src/com/god/attendence/Main.java
+@@ -16,8 +16,13 @@ import org.apache.http.HttpResponse;
+ import org.apache.http.NameValuePair;
+ import org.apache.http.client.CookieStore;
+ import org.apache.http.client.entity.UrlEncodedFormEntity;
++import org.apache.http.client.methods.HttpGet;
+ import org.apache.http.client.methods.HttpPost;
+ import org.apache.http.client.protocol.ClientContext;
++import org.apache.http.conn.scheme.PlainSocketFactory;
++import org.apache.http.conn.scheme.Scheme;
++import org.apache.http.conn.scheme.SchemeRegistry;
++import org.apache.http.cookie.Cookie;
+ import org.apache.http.impl.client.BasicCookieStore;
+ import org.apache.http.impl.client.DefaultHttpClient;
+ import org.apache.http.message.BasicNameValuePair;
+@@ -32,6 +37,12 @@ import org.jsoup.nodes.Document;
+ import org.jsoup.nodes.Element;
+ import org.jsoup.select.Elements;
+ 
++import com.loopj.android.http.AsyncHttpClient;
++import com.loopj.android.http.AsyncHttpResponseHandler;
++import com.loopj.android.http.PersistentCookieStore;
++import com.loopj.android.http.RequestParams;
++import com.loopj.android.http.ResponseHandlerInterface;
++
+ import android.os.AsyncTask;
+ import android.os.Bundle;
+ import android.app.Activity;
+@@ -51,9 +62,13 @@ public class Main extends Activity {
+ 	private EditText captcha;
+ 	private ImageView capImg;
+ 	private Button login;
+-	private Map<String, String> cookies;
++	private HashMap<String, String> data = new HashMap<String, String>();	 ;
+     private Map<String, String> hiddendata = new HashMap<String, String>();	 
+-    List<NameValuePair> data = new ArrayList<NameValuePair>();
++    List<NameValuePair> data1 = new ArrayList<NameValuePair>();
++    List<Cookie> ck = new ArrayList<Cookie>();
++    private MySSLSocketFactory sslf = null;
++    private AsyncHttpClient myClient = null;
++	static Document doc= null;
+     
+ 	@Override
+ 	protected void onCreate(Bundle savedInstanceState) {
+@@ -68,7 +83,6 @@ public class Main extends Activity {
+ 	    login = (Button) findViewById(R.id.bLogin);
+ 	    
+ 	    // Tell the HttpsURLConnection to trust our certificate
+-	    MySSLSocketFactory sslf = null;
+         try {
+         	KeyStore ks = MySSLSocketFactory.getKeystoreOfCA(Main.this.getResources().openRawResource(R.raw.gd_bundle));
+ 			sslf = new MySSLSocketFactory(ks);
+@@ -80,8 +94,7 @@ public class Main extends Activity {
+ 		} 
+ 		
+ 	    // Get the captcha image and set it.
+-		CaptchExecution task = new CaptchExecution();
+-		Bitmap icon = task.doInBackground();
++		Bitmap icon =getCaptchaImg();
+ 		capImg.setImageBitmap(icon);
+      		
+ 		// OnClickListener event for the Login Button
+@@ -90,27 +103,53 @@ public class Main extends Activity {
+ 			@Override
+ 			public void onClick(View v) {
+ 				// TODO Validate;
+-			   new LoginExecution().execute();
++			    //new LoginExecution().execute();
++				
++				data.put("username", sapid.getText().toString());
++				data.put("passwd",pass.getText().toString());
++				data.put("txtCaptcha",captcha.getText().toString());
++				RequestParams params = new RequestParams(data);
++				myClient.post(Main.this ,"https://academics.ddn.upes.ac.in/upes/index.php",params,new AsyncHttpResponseHandler() {
++				    @Override
++				    public void onSuccess(String response) {
++				    	Document doc = Jsoup.parse(response, "https://academics.ddn.upes.ac.in/upes/index.php");
++				        System.out.println(doc.text().toString());
++				    }
++				});
++				myClient.notifyAll();
++				myClient.get("https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631",new AsyncHttpResponseHandler() {
++				    @Override
++				    public void onSuccess(String response) {
++				    	Document doc = Jsoup.parse(response, "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631");
++				        System.out.println(doc.text().toString());
++				    }
++				});
+ 			}
+ 		});
+ 	}
+-	
+-	private class CaptchExecution extends AsyncTask<Void, Void, Bitmap> {
+ 
+-		@Override
+-		protected Bitmap doInBackground(Void... params) {
++		protected Bitmap getCaptchaImg() {
+ 			 // Get the captcha image and set it.
+ 			String captchaUrl = null;
+ 			Bitmap icon = null;
+-			try {
+-				Response res = Jsoup.connect("https://academics.ddn.upes.ac.in/upes/")
+-						.userAgent(getString(R.string.UserAgent))
+-						.referrer("http://stu.upes.ac.in/")
+-						.method(Connection.Method.GET)
+-						.execute();
++				SchemeRegistry registry = new SchemeRegistry();
++			    registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
++			    registry.register(new Scheme("https", sslf, 443));
++			    myClient = new AsyncHttpClient(registry);
++				
++				PersistentCookieStore myCookieStore = new PersistentCookieStore(Main.this);
++				myCookieStore.clear();
++				myClient.setCookieStore(myCookieStore);
++				//myClient.setEnableRedirects(true);
++				AsyncHttpResponseHandler res = new AsyncHttpResponseHandler();
++				myClient.get(Main.this, "https://academics.ddn.upes.ac.in/upes/index.php",new AsyncHttpResponseHandler() {
++				    @Override
++				    public void onSuccess(String response) {
++				      Main.doc = Jsoup.parse(response, "https://academics.ddn.upes.ac.in/upes/index.php");
++				    }
++				});
+ 
+ 				// Get Img URL
+-				Document doc = res.parse();
+ 				Elements elements = doc.select("img#imgCaptcha");
+ 				captchaUrl=elements.attr("src");
+ 				System.out.println(captchaUrl);			
+@@ -123,19 +162,10 @@ public class Main extends Activity {
+ 					String val = hiddenvalue.attr("value");
+ 					if(name.length()!=0 && val.length()!=0)
+ 					{
+-						//hiddendata.put(name.trim(), val.trim());
+-						data.add(new BasicNameValuePair(name.trim(), val.trim()));
++						data.put(name.trim(), val.trim());
++						//data.add(new BasicNameValuePair(name.trim(), val.trim()));
+ 					}
+-				}
+-
+-				System.out.println(hiddendata.toString());
+-			} 
+-			catch (IOException e1)
+-			{
+-				e1.printStackTrace();
+-			}	 
+-			finally 
+-			{				
++				}	 				
+ 				try 
+ 				{
+ 
+@@ -148,98 +178,16 @@ public class Main extends Activity {
+ 				{
+ 					e.printStackTrace();
+ 				} 
+-			}
+ 			return icon;
+ 		}		
+-	}
+-
+-	private class LoginExecution extends AsyncTask<Void, Void, Void>{
+-
+-		@Override
+-		protected Void doInBackground(Void... arg0) {
+-			// TODO try HttpClient or URLConnection ;lookup working of captcha;find jscall
+-			try 
+-			{			
+-//				// Using Jsoup
+-//				Connection.Response res1 = Jsoup.connect("https://academics.ddn.upes.ac.in/upes/index.php")
+-//												.userAgent(getString(R.string.UserAgent))
+-//												.data("username",sapid.getText().toString())
+-//												.data("passwd",pass.getText().toString())
+-//												.data("txtCaptcha",captcha.getText().toString())
+-//												.data(hiddendata)
+-//												.cookies(cookies)
+-//												.header("Content-Type","text/html;charset=UTF-8")
+-//												.method(Method.POST)
+-//												.execute();
+-//				
+-//				// Get the cookies created after login
+-//			    cookies = res1.cookies();
+-//				System.out.println(cookies);
+-//
+-//				
+-//
+-//				
+-//				if(cookies!=null)
+-//				{
+-//				Document doc = Jsoup.connect("https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631")
+-//						       .userAgent(getString(R.string.UserAgent))
+-//						       .cookies(cookies)
+-//					           .get();
+-//				
+-//			    System.out.println(doc.text().toString());
+-//				}
+-				
+-				// Using aphache HTTP client
+-				KeyStore ks = MySSLSocketFactory.getKeystoreOfCA(Main.this.getResources().openRawResource(R.raw.gd_bundle));
+-				DefaultHttpClient client =  MySSLSocketFactory.getNewHttpClient(ks);
+-				HttpContext localContext = new BasicHttpContext();
+-				CookieStore cookieStore = new BasicCookieStore();
+-				localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+-				HttpPost request = new HttpPost("https://academics.ddn.upes.ac.in/upes/index.php");
+-				client.execute(request,localContext);
+-				System.out.println(cookieStore.toString());
+-				
+-				data.add(new BasicNameValuePair("username", sapid.getText().toString()));
+-				data.add(new BasicNameValuePair("passwd",pass.getText().toString()));
+-				data.add(new BasicNameValuePair("txtCaptcha",captcha.getText().toString()));
+-				HttpPost request1 = new HttpPost("https://academics.ddn.upes.ac.in/upes/index.php");
+-				request1.setEntity(new UrlEncodedFormEntity(data, HTTP.UTF_8));
+-				HttpResponse r = client.execute(request1,localContext);
+-				if (r.getStatusLine().getStatusCode() == 200) {
+-					HttpEntity entity = r.getEntity();
+-					Log.d("login", "success!");
+-					if (entity != null) {
+-						System.out.println(cookieStore.toString());
+-					}
+-				}
++	
++		public class  getImg extends AsyncTask<void, void, void>
++		{
++			protected void doInBackground() {
+ 				
+-				HttpPost request2 = new HttpPost("https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631");
+-				HttpResponse res = client.execute(request2,localContext);
+-				if (res.getStatusLine().getStatusCode() == 200) {
+-					String html = EntityUtils.toString(res.getEntity());
+-				    Document document = Jsoup.parse(html);
+-				    System.out.println("Doc"+document.toString());
+-				}
+-				else
+-				{
+-					System.out.println(res.getStatusLine().getStatusCode());
+-					System.out.println(res.toString());
+-				}
+-			} 
+-			catch (IOException e)
+-			{
+-				e.printStackTrace();
+-				return null;
+ 			}
+-			finally
+-			{
+-				// startActivity(new Intent("com.god.attendence.DISPLAYATTEN"));
+-			}
+-			return null;
+ 		}
+-	
+-	}
+-	
++		
+ 	@Override
+ 	protected void onPause() {
+ 		// TODO Save the user account;
