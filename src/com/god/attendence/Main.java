@@ -65,28 +65,24 @@ public class Main extends Activity {
 	    refreshCaptcha = (Button) findViewById(R.id.bCaptcha);
 	    
 	    // Tell the HttpsURLConnection to trust our certificate
-        try 
-        {
+        try {
         	KeyStore ks = MySSLSocketFactory.getKeystoreOfCA(this.getResources().openRawResource(R.raw.gd_bundle));
 			sslf = new MySSLSocketFactory(ks);
 		}
-        catch (Exception e)
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 		}
-        finally
-		{
+        finally {
 			sslf.fixHttpsURLConnection();
 		} 
 		
 	    // Get the hidden data and the captcha image
-		new getHiddenData().execute();
+        new getImg().execute();	
 		
-		refreshCaptcha.setOnClickListener(new View.OnClickListener() {
-			
+		refreshCaptcha.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				new getCaptchaImg().execute();
+				new getImg().execute();	
 			}
 		});
      		
@@ -95,7 +91,7 @@ public class Main extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Validate; basic http authentication
+				// TODO Validate;
 				//new LoginExecution().execute();
 
 				HttpURLConnection connection = null;
@@ -103,12 +99,6 @@ public class Main extends Activity {
 				{
 					query += "username="+URLEncoder.encode(sapid.getText().toString(), charset)+"&passwd="+URLEncoder.encode(pass.getText().toString(), charset)+"&txtCaptcha="+URLEncoder.encode(captcha.getText().toString(), charset);
 					System.out.println(query);
-					
-					 Authenticator.setDefault(new Authenticator() {
-						 protected PasswordAuthentication getPasswordAuthentication() {
-							 return new PasswordAuthentication(sapid.getText().toString(), pass.getText().toString().toCharArray());						 
-						 }
-					 });
 					 
 					connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/index.php").openConnection();
 					connection.setDoOutput(true); // Triggers POST.
@@ -120,7 +110,8 @@ public class Main extends Activity {
 					OutputStream output = connection.getOutputStream();
 					try {
 					     output.write(query.getBytes(charset));
-					} finally {
+					} 
+					finally {
 					     try { output.close(); } catch (IOException logOrIgnore) {}
 					}
 
@@ -128,15 +119,18 @@ public class Main extends Activity {
 					String html = "";
 					BufferedReader reader = new BufferedReader(new InputStreamReader(response, charset));
 					try {
-						for (String line; (line = reader.readLine()) != null;) {
-							html += line+"\n"; 
-						}
-					} finally {
-						try { reader.close(); } catch (IOException logOrIgnore) {}
-					}
+				    	String line;
+				        while ( (line = reader.readLine()) != null) {
+				            html += line+"\n"; 
+				        }
+				    }
+				    finally {
+				        try { reader.close(); } catch (IOException logOrIgnore) {}
+				    }
+					System.out.println(connection.getHeaderFields().toString());
 					connection.disconnect();
 					Document document = Jsoup.parse(html);
-					System.out.println("At Login :\n"+document.text().toString());
+					System.out.println("At Login :\n"+document.toString());
 					System.out.println("Status Code: "+connection.getResponseCode());
 					System.out.println(cookieMan.getCookieStore().getCookies().toString());
 
@@ -144,6 +138,21 @@ public class Main extends Activity {
 					{
 						AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
 						builder.setMessage("Incorrect Captcha!\nPlease try again.");
+						builder.setCancelable(true);
+						builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+						});
+
+						AlertDialog alert = builder.create();
+						alert.show();
+					}
+					else if(document.data().toString().equals("alert('Incorrect username or password. Please try again.'); window.history.go(-1);"))
+					{
+						AlertDialog.Builder builder = new AlertDialog.Builder(Main.this);
+						builder.setMessage("Incorrect username or password. Please try again");
 						builder.setCancelable(true);
 						builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 							@Override
@@ -164,15 +173,15 @@ public class Main extends Activity {
 						String html1 = "";
 						BufferedReader reader1 = new BufferedReader(new InputStreamReader(res, charset));
 						try {
-							for (String line; (line = reader1.readLine()) != null;) {
-								html1 += line+"\n"; 
-							}
-						} finally {
-							try { reader1.close(); } catch (IOException logOrIgnore) {}
-						}
+					    	String line;
+					        while ( (line = reader1.readLine()) != null) {
+					            html1 += line+"\n"; 
+					        }
+					    }
+					    finally {
+					        try { reader1.close(); } catch (IOException logOrIgnore) {}
+					    }
 						connection.disconnect();
-						// Document doc = Jsoup.parse(html1);
-						// System.out.println("After Login :\n"+doc.text().toString());
 						
 						Intent ourIntent = new Intent(Main.this, DisplayAtten.class);
 						ourIntent.putExtra("com.god.attendence.ATTPAGE", html1);
@@ -187,6 +196,33 @@ public class Main extends Activity {
 		});
 	}
 	
+	private class getImg extends AsyncTask<Void, Void, Bitmap>{
+		@Override
+		protected Bitmap doInBackground(Void... arg0) 
+		{
+			Bitmap icon = null;
+			try 
+			{
+				//URL newurl = new URL(Url[0]);
+				URL newurl  = new URL("https://academics.ddn.upes.ac.in/upes/modules/create_image.php?");
+				HttpsURLConnection urlConnection = (HttpsURLConnection) newurl.openConnection();
+				InputStream in = urlConnection.getInputStream();
+				icon = BitmapFactory.decodeStream(in);
+				// in.reset() ;
+			} 
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			} 
+			return icon;
+		}
+		
+		protected void onPostExecute(Bitmap icon) {
+			capImg.setImageBitmap(icon);
+			new getHiddenData().execute();
+		}
+	}
+	
 	private class getHiddenData extends AsyncTask<Void, Void, Void>{
 		
 		@Override
@@ -196,13 +232,7 @@ public class Main extends Activity {
 			CookieHandler.setDefault(cookieMan);
 			
 			try 
-			{	
-				connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/").openConnection();
-				connection.setRequestProperty("Accept-Charset", charset);
-				connection.setRequestProperty("User-Agent", getString(R.string.UserAgent)); 
-				connection.getContent();
-				connection.disconnect();
-				
+			{									
 				connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/").openConnection();
 				connection.setRequestProperty("Accept-Charset", charset);
 				connection.setRequestProperty("User-Agent", getString(R.string.UserAgent)); 
@@ -210,10 +240,12 @@ public class Main extends Activity {
 				String html = "";
 				BufferedReader reader = new BufferedReader(new InputStreamReader(response, charset));
 			    try {
-			        for (String line; (line = reader.readLine()) != null;) {
+			    	String line;
+			        while ( (line = reader.readLine()) != null) {
 			            html += line+"\n"; 
 			        }
-			    } finally {
+			    }
+			    finally {
 			        try { reader.close(); } catch (IOException logOrIgnore) {}
 			    }
 				Document doc = Jsoup.parse(html);
@@ -246,94 +278,62 @@ public class Main extends Activity {
 		}
 		
 		protected void onPostExecute(Void v) {
-			new getCaptchaImg().execute();
+			
 		}
 	}
 	
-	protected class getCaptchaImg extends AsyncTask<Void, Void, String> {
-
-		@Override
-		protected String doInBackground(Void... arg0) {
+//	protected class getCaptchaImg extends AsyncTask<Void, Void, String> {
+//
+//		@Override
+//		protected String doInBackground(Void... arg0) {
+//			
+//			String captchaUrl = null;
+//			HttpURLConnection connection = null;
+//			// Get the captcha image and set it.
+//			try {		
+//				connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/").openConnection();
+//				connection.setDoOutput(true); // Triggers POST.
+//				connection.setRequestProperty("Accept-Charset", charset);
+//				connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+//				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
+//				connection.setRequestProperty("User-Agent", getString(R.string.UserAgent)); 
+//				
+//				InputStream response = connection.getInputStream();
+//				String html = "";
+//				BufferedReader reader = new BufferedReader(new InputStreamReader(response, charset));
+//				try {
+//			    	String line;
+//			        while ( (line = reader.readLine()) != null) {
+//			            html += line+"\n"; 
+//			        }
+//			    } finally {
+//			        try { reader.close(); } catch (IOException logOrIgnore) {}
+//			    }
+//				Document doc = Jsoup.parse(html);
+//				System.out.println("Status Code: "+connection.getResponseCode());
+//				System.out.println(doc.text().toString());
+//				System.out.println(cookieMan.getCookieStore().getCookies().toString());
+//				
+//				// Get Img URL
+//				Elements elements = doc.select("img#imgCaptcha");
+//				captchaUrl = elements.attr("src");
+//				System.out.println(captchaUrl);					
+//			} catch (IOException e) {
+//				e.printSackTrace();
+//			}
+//			finally {
+//				connection.disconnect();
+//			}
+//			return captchaUrl;
+//		}	
+//		
+//		protected void onPostExecute(String URL) {
+//			// get the image and set it
+//			new getImg().execute();	
+//		}
+//	
+//	}		
 			
-			String captchaUrl = null;
-			HttpURLConnection connection = null;
-			// Get the captcha image and set it.
-			try {		
-				connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/").openConnection();
-				connection.setDoOutput(true); // Triggers POST.
-				connection.setRequestProperty("Accept-Charset", charset);
-				connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
-				connection.setRequestProperty("User-Agent", getString(R.string.UserAgent)); 
-				
-				InputStream response = connection.getInputStream();
-				String html = "";
-				BufferedReader reader = new BufferedReader(new InputStreamReader(response, charset));
-			    try 
-			    {
-			        for (String line; (line = reader.readLine()) != null;)
-			        {
-			            html += line+"\n"; 
-			        }
-			    } 
-			    finally 
-			    {
-			        try { reader.close(); } catch (IOException logOrIgnore) {}
-			    }
-				Document doc = Jsoup.parse(html);
-				System.out.println("Status Code: "+connection.getResponseCode());
-				System.out.println(doc.text().toString());
-				System.out.println(cookieMan.getCookieStore().getCookies().toString());
-				
-				// Get Img URL
-				Elements elements = doc.select("img#imgCaptcha");
-				captchaUrl = elements.attr("src");
-				System.out.println(captchaUrl);					
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				connection.disconnect();
-			}
-			return captchaUrl;
-		}	
-		
-		protected void onPostExecute(String URL) {
-			// get the img and set it
-			new getImg().execute(URL);	
-		}
-		
-	}		
-	
-	private class getImg extends AsyncTask<String, Void, Bitmap>{
-			@Override
-			protected Bitmap doInBackground(String... Url) 
-			{
-				Bitmap icon = null;
-				try 
-				{
-					URL newurl = new URL(Url[0]);
-					HttpsURLConnection urlConnection = (HttpsURLConnection) newurl.openConnection();
-					InputStream in = urlConnection.getInputStream();
-					icon = BitmapFactory.decodeStream(in);
-					in.reset() ;
-				} 
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				} 
-				return icon;
-			}
-			
-			protected void onPostExecute(Bitmap icon) {
-				// icon.setDensity(120);
-				capImg.setImageBitmap(icon);
-			}
-		}
-		
 	@Override
 	protected void onPause() {
 		// TODO Save the user account;
