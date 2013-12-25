@@ -3,6 +3,7 @@
 	<name>Attendence</name>
 	<comment></comment>
 	<projects>
+		<project>Volley</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
