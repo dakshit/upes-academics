@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyStore;
@@ -45,7 +43,6 @@ public class Main extends Activity {
 	private ImageView capImg;
 	private Button login;
 	private Button refreshCaptcha;
-	private MySSLSocketFactory sslf = null;
     private String charset = HTTP.ISO_8859_1;
     private String query = "submit=Login&";
 	private CookieManager cookieMan = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
@@ -65,9 +62,10 @@ public class Main extends Activity {
 	    refreshCaptcha = (Button) findViewById(R.id.bCaptcha);
 	    
 	    // Tell the HttpsURLConnection to trust our certificate
+	    MySSLSocketFactory sslf = null;
         try {
         	KeyStore ks = MySSLSocketFactory.getKeystoreOfCA(this.getResources().openRawResource(R.raw.gd_bundle));
-			sslf = new MySSLSocketFactory(ks);
+        	sslf = new MySSLSocketFactory(ks);
 		}
         catch (Exception e) {
 			e.printStackTrace();
@@ -130,7 +128,7 @@ public class Main extends Activity {
 					System.out.println(connection.getHeaderFields().toString());
 					connection.disconnect();
 					Document document = Jsoup.parse(html);
-					System.out.println("At Login :\n"+document.toString());
+					System.out.println("At Login :\n"+document.data().toString());
 					System.out.println("Status Code: "+connection.getResponseCode());
 					System.out.println(cookieMan.getCookieStore().getCookies().toString());
 
@@ -186,6 +184,7 @@ public class Main extends Activity {
 						Intent ourIntent = new Intent(Main.this, DisplayAtten.class);
 						ourIntent.putExtra("com.god.attendence.ATTPAGE", html1);
 						startActivity(ourIntent);
+						finish();
 					}
 				}
 				catch (Exception e) 
@@ -203,7 +202,6 @@ public class Main extends Activity {
 			Bitmap icon = null;
 			try 
 			{
-				//URL newurl = new URL(Url[0]);
 				URL newurl  = new URL("https://academics.ddn.upes.ac.in/upes/modules/create_image.php?");
 				HttpsURLConnection urlConnection = (HttpsURLConnection) newurl.openConnection();
 				InputStream in = urlConnection.getInputStream();
@@ -222,6 +220,7 @@ public class Main extends Activity {
 			new getHiddenData().execute();
 		}
 	}
+	
 	
 	private class getHiddenData extends AsyncTask<Void, Void, Void>{
 		
@@ -281,65 +280,13 @@ public class Main extends Activity {
 			
 		}
 	}
-	
-//	protected class getCaptchaImg extends AsyncTask<Void, Void, String> {
-//
-//		@Override
-//		protected String doInBackground(Void... arg0) {
-//			
-//			String captchaUrl = null;
-//			HttpURLConnection connection = null;
-//			// Get the captcha image and set it.
-//			try {		
-//				connection = (HttpURLConnection) new URL("https://academics.ddn.upes.ac.in/upes/").openConnection();
-//				connection.setDoOutput(true); // Triggers POST.
-//				connection.setRequestProperty("Accept-Charset", charset);
-//				connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-//				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
-//				connection.setRequestProperty("User-Agent", getString(R.string.UserAgent)); 
-//				
-//				InputStream response = connection.getInputStream();
-//				String html = "";
-//				BufferedReader reader = new BufferedReader(new InputStreamReader(response, charset));
-//				try {
-//			    	String line;
-//			        while ( (line = reader.readLine()) != null) {
-//			            html += line+"\n"; 
-//			        }
-//			    } finally {
-//			        try { reader.close(); } catch (IOException logOrIgnore) {}
-//			    }
-//				Document doc = Jsoup.parse(html);
-//				System.out.println("Status Code: "+connection.getResponseCode());
-//				System.out.println(doc.text().toString());
-//				System.out.println(cookieMan.getCookieStore().getCookies().toString());
-//				
-//				// Get Img URL
-//				Elements elements = doc.select("img#imgCaptcha");
-//				captchaUrl = elements.attr("src");
-//				System.out.println(captchaUrl);					
-//			} catch (IOException e) {
-//				e.printSackTrace();
-//			}
-//			finally {
-//				connection.disconnect();
-//			}
-//			return captchaUrl;
-//		}	
-//		
-//		protected void onPostExecute(String URL) {
-//			// get the image and set it
-//			new getImg().execute();	
-//		}
-//	
-//	}		
 			
 	@Override
 	protected void onPause() {
 		// TODO Save the user account;
 		super.onPause();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

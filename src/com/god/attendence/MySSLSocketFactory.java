@@ -62,7 +62,7 @@ public class MySSLSocketFactory extends SSLSocketFactory {
 
         sslContext.init(null, new TrustManager[] { tm }, null);
     }
-
+    
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
         return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
@@ -72,18 +72,27 @@ public class MySSLSocketFactory extends SSLSocketFactory {
         return sslContext.getSocketFactory().createSocket();
     }	
     
+    /**
+     * Makes HttpsURLConnection trusts a set of certificates specified by the KeyStore
+     */
     public void fixHttpsURLConnection() {
     	HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
     }
     
-	public static KeyStore getKeystoreOfCA(InputStream in) {
+    /**
+     * Gets a KeyStore containing the Certificate
+     * 
+     * @param cert InputStream of the Certificate
+     * @return KeyStore
+     */
+	public static KeyStore getKeystoreOfCA(InputStream cert) {
 		
 		// Load CAs from an InputStream
 		InputStream caInput = null;
 		Certificate ca = null;
 		try {
 			CertificateFactory cf = CertificateFactory.getInstance("X.509");
-			caInput = new BufferedInputStream(in);
+			caInput = new BufferedInputStream(cert);
 			ca = (Certificate) cf.generateCertificate(caInput);
 		} catch (CertificateException e1) {
 			e1.printStackTrace();
@@ -109,6 +118,11 @@ public class MySSLSocketFactory extends SSLSocketFactory {
 		return keyStore;
 	}
 	
+	/**
+	 * Gets a Default KeyStore
+	 * 
+	 * @return KeyStore
+	 */
 	public static KeyStore getKeystore() {
         KeyStore trustStore = null;
         try {
@@ -120,6 +134,11 @@ public class MySSLSocketFactory extends SSLSocketFactory {
         return trustStore;
     }
 
+	/**
+	 * Returns a SSlSocketFactory which trusts all certificates
+	 * 
+	 * @return
+	 */
     public static SSLSocketFactory getFixedSocketFactory() {
         SSLSocketFactory socketFactory;
         try {
@@ -132,6 +151,12 @@ public class MySSLSocketFactory extends SSLSocketFactory {
         return socketFactory;
     }
     
+    /**
+     * Gets a DefaultHttpClient which trusts a set of certificates specified by the KeyStore
+     * 
+     * @param keyStore
+     * @return
+     */
 	public static DefaultHttpClient getNewHttpClient(KeyStore keyStore) {
 		
 	    try {
