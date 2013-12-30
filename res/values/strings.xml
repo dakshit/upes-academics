@@ -2,8 +2,9 @@
 <resources>
 
     <string name="app_name">Attendance</string>
-    <string name="action_settings">Settings</string>
+    <string name="menu_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="UserAgent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36</string>
+    <string name="menu_logout">Log Out</string>
 
 </resources>
