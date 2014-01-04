@@ -63,10 +63,23 @@ public class MySSLSocketFactory extends SSLSocketFactory {
         sslContext.init(null, new TrustManager[] { tm }, null);
     }
     
+    /**
+     * Creates a new socket with following parameters.
+     * 
+     * @param socket
+     * @param port
+     * @param autoClose
+     * @throws IOException
+     * @throws UnknownHostException
+     * @return Socket
+     */
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
         return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 
+    /**
+     * Creates a new default socket which is not connected to any remote host
+     */
     @Override
     public Socket createSocket() throws IOException {
         return sslContext.getSocketFactory().createSocket();

@@ -1,5 +1,10 @@
 package com.god.attendence;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpCookie;
+import java.net.URI;
 import java.util.Iterator;
 
 import android.app.Activity;
@@ -19,33 +24,40 @@ public class Splash extends Activity {
 		Thread timer = new Thread(){
 			public void run()
 			{
-				boolean prefExist = true;
+				Log.i(Splash.class.getName(), "Getting Logged in state.");
+				SharedPreferences settings = getSharedPreferences("SETTINGS", 0);
+				boolean loggedin = settings.getBoolean("LOGGEDIN", false);
+				Log.i(Splash.class.getName(), "Logged in state:"+loggedin+".");
+				
+				Log.i(Splash.class.getName(), "Getting persisten cookies.");
+				final CookieManager cookieMan = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
 				try
 				{
 					SharedPreferences pcookies = getSharedPreferences("PERSISTCOOKIES", 0);	
 					Iterator<String> keyset = pcookies.getAll().keySet().iterator();
 					if(keyset.hasNext())
 					{
-						int count = 0;
 						while(keyset.hasNext())
 						{
 							String cookiename = keyset.next();
 							String cookievalue = pcookies.getString(cookiename, "");
-							if(cookievalue.isEmpty())
+							if(!cookievalue.isEmpty()) 
 							{
-								++count;
+								try {
+									HttpCookie cookie = new HttpCookie(cookiename,cookievalue);
+									cookie.setDomain("academics.ddn.upes.ac.in");
+									cookie.setPath("/");
+									cookie.setVersion(0);
+									cookieMan.getCookieStore().add(new URI("https://academics.ddn.upes.ac.in/upes/"), cookie);
+								} catch (Exception e) {
+									e.printStackTrace();
+								} 
 							}
-						}
-						if(count>0)
-						{
-							Log.i(Splash.class.getName(), "Persisten cookies not found.");
-							prefExist = false;
 						}
 					}
 					else
 					{
-						Log.i(Splash.class.getName(), "Preferences do not exist.");
-						prefExist = false;
+						Log.i(Splash.class.getName(), "Persisten cookies not found.");
 					}
 					sleep(0000);
 				}
@@ -55,18 +67,23 @@ public class Splash extends Activity {
 				}
 				finally
 				{
-					if(!prefExist)
+					// Set the cookie manager irrespective of weather persistent cookies exist.
+					Log.i(Splash.class.getName(), "Setting CookieHandler");
+					CookieHandler.setDefault(cookieMan);
+					
+					if(!loggedin)
 					{
 						Log.i(Splash.class.getName(), "Starting Login Activity");
-						Intent openMainActivity = new Intent("com.god.attendence.MAIN");
-						startActivity(openMainActivity);		
+						Intent intent = new Intent(Splash.this, Login.class);
+						startActivity(intent);		
 						finish();
 					}
 					else
 					{
 						Log.i(Splash.class.getName(), "Persisten cookies found.");
+						Log.d(Splash.class.getName(), cookieMan.getCookieStore().getCookies().toString());
 						Log.i(Splash.class.getName(), "Starting Attendance Activity");
-						Intent intent = new Intent(Splash.this, DisplayAtten.class);
+						Intent intent = new Intent(Splash.this, Attendence.class);
 						startActivity(intent);
 						finish();
 					}
