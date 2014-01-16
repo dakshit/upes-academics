@@ -1,16 +1,24 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:attendence="http://schemas.android.com/apk/res-auto"  >
 
-    <item android:id="@+id/menu_refresh" android:title="@string/menu_refresh" android:showAsAction="never"></item><item
+    <item
+        android:id="@+id/menu_refresh"
+        android:orderInCategory="80"
+        android:icon="@drawable/ic_menu_refresh"
+        android:title="@string/menu_refresh"
+        attendence:showAsAction="ifRoom">
+    </item>
+    <item
         android:id="@+id/menu_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_settings">
+        android:orderInCategory="90"
+        android:title="@string/menu_settings"
+        attendence:showAsAction="never">
     </item>
     <item
         android:id="@+id/menu_logout"
-        android:showAsAction="never"
-        android:title="@string/menu_logout">
+        android:orderInCategory="100"
+        android:title="@string/menu_logout"
+        attendence:showAsAction="never">
     </item>
-    
 
 </menu>

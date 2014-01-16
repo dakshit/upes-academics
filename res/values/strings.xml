@@ -8,5 +8,7 @@
     <string name="generic_server_down">It seems the web server is down or not responding.\nPlease try again later.</string>
     <string name="no_internet">Unable to establish an internet connection.</string>
     <string name="generic_error">Network Error occurred. Please try again later.</string>
+    <string name="incorrect_captcha">alert(\'Please enter correct code.\'); window.history.go(-1);</string>
+    <string name="incorrect_user_or_pass">alert(\'Incorrect username or password. Please try again.\'); window.history.go(-1);</string>
 
 </resources>
