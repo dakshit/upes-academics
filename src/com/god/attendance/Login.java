@@ -69,14 +69,28 @@ public class Login extends ActionBarActivity implements CaptchaDialogFragment.Ca
 
 		// OnClickListener event for the Login Button
 		bLogin.setOnClickListener(new View.OnClickListener() {
-
 			@Override
-			public void onClick(View v) {
-				// TODO Validate;			
-				showCaptchaDialog();				
+			public void onClick(View v) {		
+				if(validate())
+				{
+					showCaptchaDialog();
+				}
+				else
+				{
+					// TODO tell user
+				}
 			}
 		});
 		
+	}
+	
+	public boolean validate() {
+		String sapid = etSapid.getText().toString();
+		String password = etPass.getText().toString();
+		if(sapid.isEmpty() && password.isEmpty() && sapid.length()!=9)
+			return false;
+		else
+			return true;
 	}
 	
 	public void showCaptchaDialog() {
@@ -109,14 +123,14 @@ public class Login extends ActionBarActivity implements CaptchaDialogFragment.Ca
 				headers.put("User-Agent", getString(R.string.UserAgent));
 				headers.put("Connection", "keep-alive");
 				
-				SharedPreferences pcookies = getSharedPreferences("PERSISTCOOKIES", 0);	
-				Iterator<String> keyset = pcookies.getAll().keySet().iterator();
-				while(keyset.hasNext())
-				{
-					String cookiename = keyset.next();
-					String cookievalue = pcookies.getString(cookiename, "");
-					headers.put("Cookie", cookiename+"="+cookievalue);
-				}
+//				SharedPreferences pcookies = getSharedPreferences("PERSISTCOOKIES", 0);	
+//				Iterator<String> keyset = pcookies.getAll().keySet().iterator();
+//				while(keyset.hasNext())
+//				{
+//					String cookiename = keyset.next();
+//					String cookievalue = pcookies.getString(cookiename, "");
+//					headers.put("Cookie", cookiename+"="+cookievalue);
+//				}
 				return headers;
 			};
 
@@ -269,13 +283,7 @@ public class Login extends ActionBarActivity implements CaptchaDialogFragment.Ca
 			}
 		};
 	}
-
-	@Override
-	protected void onPause() {
-		// TODO Save the user account;
-		super.onPause();
-	}	
-
+	
 	@Override
 	protected void onDestroy() {
 		MyVolley.getInstance().cancelPendingRequests();

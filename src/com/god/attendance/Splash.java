@@ -9,13 +9,13 @@ import java.util.Iterator;
 
 import com.god.attendence.R;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
-public class Splash extends Activity {
+public class Splash extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

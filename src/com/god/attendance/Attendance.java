@@ -26,13 +26,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Attendance extends ActionBarListActivity {
@@ -41,7 +45,8 @@ public class Attendance extends ActionBarListActivity {
 	private CookieManager cookieMan = (CookieManager) CookieHandler.getDefault();
 	private ProgressDialog pd;
 	private ArrayList<String> subjects = new ArrayList<String>();
-	private ArrayList<Float> percent = new ArrayList<Float>();
+	private ArrayList<Float> percentage = new ArrayList<Float>();
+	// TODO: add myTag
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,33 +96,32 @@ public class Attendance extends ActionBarListActivity {
 	}
 
 	private void Logout() {
-		
+
 		pd.setMessage("Logging out...");
 		pd.setCancelable(false);
 		pd.show();
-		
+
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=logout";
 		StringRequest request = new StringRequest(Method.POST,
 				mURL,
 				new Response.Listener<String>() {
+			    	@Override
+			    	public void onResponse(String response) {
+			    		System.out.println(Jsoup.parse(response).text().toString());
 
-					@Override
-					public void onResponse(String response) {
-						System.out.println(Jsoup.parse(response).text().toString());
-						
-						Log.i(Attendance.class.getName(), "Setting LOGGEDIN pref to false");
-						SharedPreferences settings = getSharedPreferences("SETTINGS", 0);
-						SharedPreferences.Editor editor = settings.edit();
-						editor.putBoolean("LOGGEDIN", false);
-						editor.commit();
-						
-						pd.dismiss();
-						Intent intent = new Intent(Attendance.this, Login.class);
-						startActivity(intent);
-						finish();
-					}
-				},
-				myErrorListener()) {
+			    		Log.i(Attendance.class.getName(), "Setting LOGGEDIN pref to false");
+			    		SharedPreferences settings = getSharedPreferences("SETTINGS", 0);
+			    		SharedPreferences.Editor editor = settings.edit();
+			    		editor.putBoolean("LOGGEDIN", false);
+			    		editor.commit();
+
+			    		pd.dismiss();
+			    		Intent intent = new Intent(Attendance.this, Login.class);
+			    		startActivity(intent);
+			    		finish();
+			    	}
+		       },
+		       myErrorListener()) {
 
 			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
 				Map<String, String> headers = new HashMap<String, String>();
@@ -139,14 +143,20 @@ public class Attendance extends ActionBarListActivity {
 			};
 		};
 		request.setShouldCache(true);
+		request.setPriority(Priority.IMMEDIATE);
 		MyVolley.getInstance().addToRequestQueue(request,"ATTENDENCE");
 	}
-	
+
 	private Response.Listener<String> createMyReqSuccessListener() {
 		return new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {				
 
+				ArrayList<Float> claHeld = new ArrayList<Float>();
+				ArrayList<Float> claAttended = new ArrayList<Float>();
+				ArrayList<String> abDates = new ArrayList<String>();
+				ArrayList<String> projPer = new ArrayList<String>();
+				
 				Log.i(Attendance.class.getName(), "Parsing response...");
 				Document doc = Jsoup.parse(response);
 				System.out.println("At Login :\n"+doc.text().toString());
@@ -166,43 +176,45 @@ public class Attendance extends ActionBarListActivity {
 						if(i>29)
 						{
 							// for subjects
-							if((i-30)%7==0)
-							{
+							if ((i - 30) % 7 == 0) {
 								subjects.add(element.text());
 							}
-							// for percentage attendance
-							if((i-34)%7==0)
-							{
-								// TODO add progress bar
-								subjects.add(data+"    "+element.text());
+							// for Classes Held
+							if ((i - 31) % 7 == 0) {
+								claHeld.add(Float.parseFloat(element.text()));
+							}
+							// for Classes attended
+							if ((i - 32) % 7 == 0) {
+								claAttended.add(Float.parseFloat(element.text()));
+							}
+							// for Dates Absent
+							if ((i - 33) % 7 == 0) {
+								abDates.add(element.text());
+							}
+							// for attendance percentage
+							if ((i - 34) % 7 == 0) {
+								percentage.add(Float.parseFloat(element.text()));
+							}
+							// for projected percentage
+							if ((i - 35) % 7 == 0) {
+								projPer.add(element.text());
 							}
 						}
 						++i;
 					}
 				}
 				Log.i(Attendance.class.getName(), "Response parsing complete.");
-				setListAdapter(new ArrayAdapter<String>(Attendance.this, android.R.layout.simple_list_item_1, subjects));
+				
+				SQLiteDatabase db = openOrCreateDatabase("attendence", MODE_PRIVATE, null);
+				db.execSQL("CREATE TABLE IF NOT EXIST attenData (Subject VARCHAR PRIMARYKEY, ClaHeld FLOAT, ClaAttended FLOAT, AbDate VARCHAR, Percentage FLOAT,ProjPer VARCHAR);");
+				
+				// TODO: reset list view
+				setListAdapter(new MyAdapter(Attendance.this, android.R.layout.simple_list_item_1,R.id.tvSubj, subjects));
 				pd.dismiss();
 			}
 		};
 	}
 
-	private class MyAdapter extends ArrayAdapter<String> {
-
-		public MyAdapter(Context context, int resource, int textViewResourceId,
-				List<String> objects) {
-			super(context, resource, textViewResourceId, objects);
-			// TODO Auto-generated constructor stub
-		}
-		
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			
-			
-			return super.getView(position, convertView, parent);
-		}
-	}
-	
 	private Response.ErrorListener myErrorListener() {
 		return new Response.ErrorListener() {
 			@Override
@@ -217,7 +229,6 @@ public class Attendance extends ActionBarListActivity {
 
 	DialogInterface.OnCancelListener progressDialogCancelListener() {
 		return new DialogInterface.OnCancelListener() {
-
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				// Cancel all pending requests when user presses back button.
@@ -227,6 +238,43 @@ public class Attendance extends ActionBarListActivity {
 
 	}
 
+	private class MyAdapter extends ArrayAdapter<String> {
+
+		public MyAdapter(Context context, int resource, int textViewResourceId,
+				List<String> objects) {
+			super(context, resource, textViewResourceId, objects);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View row = inflater.inflate(R.layout.list_row, parent ,false);
+
+			TextView tvSubject = (TextView) row.findViewById(R.id.tvSubj);
+			TextView tvPercent = (TextView) row.findViewById(R.id.tvPercent);
+			ProgressBar pbPercent = (ProgressBar) row.findViewById(R.id.pbPercent);
+
+			tvSubject.setText(subjects.get(position));
+
+			if(position!=0)
+			{
+				int pos= position-1;
+				int percent = Float.floatToIntBits(percentage.get(pos));				
+				tvPercent.setText(percentage.get(pos).toString()+"%");
+				pbPercent.setProgress(percent);
+			}
+
+			if(position==0)
+			{
+				tvPercent.setVisibility(View.GONE);
+				pbPercent.setVisibility(View.GONE);
+			}
+
+			return row;
+		}
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -239,19 +287,19 @@ public class Attendance extends ActionBarListActivity {
 		if(item.getItemId() == R.id.menu_logout)
 		{			
 			Logout();
-			
-//			// TODO remove persistent cookies or send logout request or both.
-//			SharedPreferences pcookies = getSharedPreferences("PERSISTCOOKIES", 0);
-//			SharedPreferences.Editor editor1 = pcookies.edit();
-//			Iterator<String> keyset = pcookies.getAll().keySet().iterator();
-//			while(keyset.hasNext())
-//			{
-//				String cookiename = keyset.next();
-//				editor1.remove(cookiename);
-//			}
-//			editor1.commit();
-//
-//			cookieMan.getCookieStore().removeAll();
+
+			//			// TODO remove persistent cookies or send logout request or both.
+			//			SharedPreferences pcookies = getSharedPreferences("PERSISTCOOKIES", 0);
+			//			SharedPreferences.Editor editor1 = pcookies.edit();
+			//			Iterator<String> keyset = pcookies.getAll().keySet().iterator();
+			//			while(keyset.hasNext())
+			//			{
+			//				String cookiename = keyset.next();
+			//				editor1.remove(cookiename);
+			//			}
+			//			editor1.commit();
+			//
+			//			cookieMan.getCookieStore().removeAll();
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
