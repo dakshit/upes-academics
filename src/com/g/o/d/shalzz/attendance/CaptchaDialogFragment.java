@@ -1,4 +1,4 @@
-package com.god.attendance;
+package com.g.o.d.shalzz.attendance;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -12,17 +12,22 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 public class CaptchaDialogFragment extends DialogFragment{
 
 	private ImageView ivCapImg;
 	private ProgressBar pbar;
-	
+	private EditText Captxt;
+
 	// Use this instance of the interface to deliver action events
 	CaptchaDialogListener mListener;
 
@@ -52,10 +57,11 @@ public class CaptchaDialogFragment extends DialogFragment{
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		// Reference the views from the layout
 		Dialog dialogView = CaptchaDialogFragment.this.getDialog();
 		Button bRefreshCaptcha = (Button) dialogView.findViewById(R.id.bRefresh);
+		Captxt = (EditText) dialogView.findViewById(R.id.etCapTxt);
 		ivCapImg = (ImageView) dialogView.findViewById(R.id.ivCapImg);
 		pbar = (ProgressBar) dialogView.findViewById(R.id.progressBar1);
 
@@ -70,6 +76,17 @@ public class CaptchaDialogFragment extends DialogFragment{
 				getImg();
 			}
 		});
+
+		// logs in when user press done on keyboard.
+		Captxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {                    
+					mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
+					return true;
+				}
+				return false;
+			}});
 	}
 
 	@Override
@@ -83,12 +100,9 @@ public class CaptchaDialogFragment extends DialogFragment{
 		// Inflate and set the layout for the dialog
 		// Pass null as the parent view because its going in the dialog layout
 		builder.setView(inflater.inflate(R.layout.captcha_dialog, null))
-		// Set the dialog title
 		.setTitle("Input Captcha")
-		// Set the dialog icon
 		.setIcon(R.drawable.ic_menu_edit)
 		.setCancelable(true)
-		// Add action buttons
 		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
@@ -98,6 +112,21 @@ public class CaptchaDialogFragment extends DialogFragment{
 		});    
 
 		return builder.create();
+	}
+	
+	/**
+	 * Checks if the form is valid
+	 * @return true or false
+	 */
+	public boolean isValid() {		
+		String captchaTxt = Captxt.getText().toString();
+		if (captchaTxt.isEmpty()) {
+			Captxt.requestFocus();
+			Captxt.setError("Password cannot be empty");
+			return false;
+		}
+		else
+			return true;
 	}
 
 	private void getImg() 

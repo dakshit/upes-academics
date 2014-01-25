@@ -9,9 +9,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/tvClasses"
         android:padding="5dp"
         android:text="TextView"
-        android:textSize="25sp" />
+        android:textSize="23sp" />
 
     <TextView
         android:id="@+id/tvPercent"
@@ -35,5 +36,16 @@
         android:layout_toLeftOf="@+id/tvPercent"
         android:gravity="center_vertical"
         android:progress="100" />
+
+    <TextView
+        android:id="@+id/tvClasses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvSubj"
+        android:layout_alignBottom="@+id/tvSubj"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:textSize="18sp"
+        android:text="0/0" />
 
 </RelativeLayout>

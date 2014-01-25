@@ -18,7 +18,9 @@
         android:ellipsize="end"
         android:gravity="center"
         android:hint="Sap ID"
-        android:inputType="number"
+        android:singleLine="true"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="number|textNoSuggestions"
         android:padding="10dp" />
 
     <EditText
@@ -30,8 +32,10 @@
         android:layout_marginRight="20dp"
         android:ellipsize="end"
         android:gravity="center"
+        android:singleLine="true"
         android:hint="Password"
-        android:inputType="textPassword"
+        android:imeOptions="flagNoExtractUi"
+        android:inputType="textPassword|textNoSuggestions"
         android:padding="10dp" />
 
     <Button
@@ -39,10 +43,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:padding="5dp"
         android:text="Login" />
 

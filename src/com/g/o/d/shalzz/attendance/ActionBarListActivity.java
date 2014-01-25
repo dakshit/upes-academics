@@ -1,4 +1,4 @@
-package com.god.attendance;
+package com.g.o.d.shalzz.attendance;
 
 import android.support.v7.app.ActionBarActivity;
 import android.widget.HeaderViewListAdapter;

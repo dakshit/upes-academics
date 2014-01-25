@@ -1,4 +1,4 @@
-package com.god.attendance;
+package com.g.o.d.shalzz.attendance;
 
 public class Subject {
 

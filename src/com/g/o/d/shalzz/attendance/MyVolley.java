@@ -1,5 +1,8 @@
-package com.god.attendance;
+package com.g.o.d.shalzz.attendance;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.security.KeyStore;
 
 import com.android.volley.Request;
@@ -47,11 +50,15 @@ public class MyVolley extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-		// initialize the singleton
+		// Initialize the singleton
 		sInstance = this;
 		
-		// fix the SSLSocket
+		// Fix the SSLSocket
 		fixSSLSocket();
+		
+		// Set a cookie manager
+		Log.i(MyVolley.class.getName(), "Setting CookieHandler");
+		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
 	}
 	
 	/**
