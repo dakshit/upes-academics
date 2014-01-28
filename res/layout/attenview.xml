@@ -4,10 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ListView
+    <ExpandableListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+        android:layout_height="wrap_content"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="2dp"
+        android:fadingEdge="vertical"
+        android:fadingEdgeLength="8dp"
+        android:groupIndicator="@null" />
 
 </LinearLayout>

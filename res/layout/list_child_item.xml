@@ -1,8 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
     
+    <TextView
+        android:id="@+id/tvClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="5dp"
+        android:gravity="center"
+        android:text="You have attended 0 out of 0 classes"
+        android:textSize="15sp" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvAbsent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvClass"
+        android:layout_toLeftOf="@+id/tvProjected"
+        android:paddingLeft="5dp"
+        android:text="Days Absent:"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvReach"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvAbsent"
+        android:layout_toRightOf="@+id/imageView1"
+        android:padding="5dp"
+        android:text="Attend x more classes to reach 75%"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvAbsent"
+        android:src="@drawable/ic_dialog_alert_holo_light" />
+
+    <TextView
+        android:id="@+id/tvProjected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvAbsent"
+        android:layout_alignBottom="@+id/tvAbsent"
+        android:layout_alignParentRight="true"
+        android:padding="5dp"
+        android:text="*99%" />
+
+</RelativeLayout>

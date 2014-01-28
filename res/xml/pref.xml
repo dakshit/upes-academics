@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference 
+        android:key="alpha_subject_order"
+        android:title="Subject Order"
+        android:summaryOn="Display subjects alphabetically"
+        android:summaryOff="Display subjects chronologically"
+        android:defaultValue="true"/>
+    
+    <PreferenceCategory
+        android:key="pref_key_storage_about"
+        android:title="About" >
+        <Preference
+            android:title="About us"
+            android:summary="Get to know who made this app.">
+            <intent android:action="com.g.o.d.shalzz.attendance.ABOUT" />
+        </Preference>    
+        <Preference
+            android:title="Build Version"
+            android:summary="1.0" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
