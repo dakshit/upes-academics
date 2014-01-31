@@ -1,5 +1,10 @@
 package com.shalzz.attendance;
 
+/**
+ * Modal class for subjects.
+ * @author shalzz
+ *
+ */
 public class Subject {
 
 	// private variables;

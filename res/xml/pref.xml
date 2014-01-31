@@ -12,11 +12,13 @@
         android:key="pref_key_storage_about"
         android:title="About" >
         <Preference
-            android:title="About us"
-            android:summary="Get to know who made this app.">
-            <intent android:action="com.g.o.d.shalzz.attendance.ABOUT" />
+            android:key="pref_info_about"
+            android:title="About"
+            android:summary="Get to know about this app.">
+            <intent android:action="com.shalzz.attendance.ABOUT" />
         </Preference>    
         <Preference
+            android:key="pref_info_version"
             android:title="Build Version"
             android:summary="1.0" />
     </PreferenceCategory>

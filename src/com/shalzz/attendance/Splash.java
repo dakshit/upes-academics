@@ -2,11 +2,12 @@ package com.shalzz.attendance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+
+import com.actionbarsherlock.app.SherlockActivity;
 import com.shalzz.attendance.R;
 
-public class Splash extends ActionBarActivity {
+public class Splash extends SherlockActivity {
 	
 	MyPreferencesManager settings = new MyPreferencesManager(this);
 

@@ -25,23 +25,13 @@
         android:text="Days Absent:"
         android:textSize="15sp" />
 
-    <TextView
-        android:id="@+id/tvReach"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/tvAbsent"
-        android:layout_toRightOf="@+id/imageView1"
-        android:padding="5dp"
-        android:text="Attend x more classes to reach 75%"
-        android:textSize="15sp" />
-
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvAbsent"
+        android:layout_marginLeft="5dp"
         android:src="@drawable/ic_dialog_alert_holo_light" />
 
     <TextView
@@ -53,5 +43,16 @@
         android:layout_alignParentRight="true"
         android:padding="5dp"
         android:text="*99%" />
+
+    <TextView
+        android:id="@+id/tvReach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvAbsent"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Attend x more classes to reach 75%"
+        android:textSize="15sp" />
 
 </RelativeLayout>

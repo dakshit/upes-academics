@@ -2,9 +2,13 @@ package com.shalzz.attendance;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.http.protocol.HTTP;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -13,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -31,7 +36,7 @@ public class UserAccount {
 	private String mUsername;
 	private String mPassword;
 	private String mCaptcha;
-	private Map<String, String> mData;
+	private int retryCount=0;
 
 	/**
 	 * The activity context used to Log the user from
@@ -59,10 +64,9 @@ public class UserAccount {
 			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			pd.setMessage(mMessage);
 			pd.setIndeterminate(true);
-			pd.setCancelable(false);
+			pd.setCancelable(true);
+			pd.setOnCancelListener(progressDialogCancelListener());
 		}
-		// if there's a progressDialog dismiss it.
-		dismissProgressDialog();
 		pd.show();
 	}
 
@@ -109,7 +113,6 @@ public class UserAccount {
 		mUsername = username;
 		mPassword = password;
 		mCaptcha = captcha;
-		mData = data;
 		showProgressDialog("Logging in...");
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php";
 		StringRequest request = new StringRequest(Method.POST,
@@ -122,7 +125,6 @@ public class UserAccount {
 				headers.put("Accept-Charset", charset);
 				headers.put("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
 				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
-				headers.put("Connection", "keep-alive");
 				return headers;
 			};
 
@@ -148,7 +150,6 @@ public class UserAccount {
 
 				Document document = Jsoup.parse(response);
 				System.out.println(document.text());
-				int retryCount=0;
 
 				if(document.data().toString().equals(mContext.getString(R.string.incorrect_captcha)))
 				{
@@ -163,14 +164,18 @@ public class UserAccount {
 				{
 					if(retryCount<3)
 					{
-						Login(mUsername, mPassword, mCaptcha, mData);
+						LoginWithNewHiddenData();
+						retryCount++;
 					}
-					else
+					else if(retryCount==3)
 					{
 						new MyPreferencesManager(mContext).removePersistenCookies();
 						dismissProgressDialog();
-						Toast.makeText(mContext, "Error! Please try again", Toast.LENGTH_LONG).show();
-						
+						LoginWithNewHiddenData();										
+					}
+					else
+					{
+						Toast.makeText(mContext, "Error! Please try again later", Toast.LENGTH_LONG).show();
 					}
 				}
 				else
@@ -202,19 +207,7 @@ public class UserAccount {
 				new Response.Listener<String>() {
 			@Override
 			public void onResponse(String response) {
-				Log.i(mContext.getClass().getName(), "Succesfully Logged out...");
-				// Remove User Details from Shared Preferences.
-				MyPreferencesManager settings = new MyPreferencesManager(mContext);
-				settings.removeUser();
-
-				// Remove user Attendance data from database.
-				DatabaseHandler db = new DatabaseHandler(mContext);
-				db.resetTables();
-				
-				dismissProgressDialog();
-				Intent ourIntent = new Intent(mContext, Login.class);
-				mContext.startActivity(ourIntent);
-				((Activity) mContext).finish();
+				Log.i(mContext.getClass().getName(), "Succesfully Logged out...");				
 			}
 		},
 		myErrorListener()) {
@@ -240,9 +233,84 @@ public class UserAccount {
 		};
 		request.setShouldCache(false);
 		request.setPriority(Priority.IMMEDIATE);
+		request.setRetryPolicy(new DefaultRetryPolicy(1500, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 		MyVolley.getInstance().addToRequestQueue(request,"LOGOUT");
+		
+		// Remove User Details from Shared Preferences.
+		MyPreferencesManager settings = new MyPreferencesManager(mContext);
+		settings.removeUser();
+
+		// Remove user Attendance data from database.
+		DatabaseHandler db = new DatabaseHandler(mContext);
+		db.resetTables();
+		
+		dismissProgressDialog();
+		Intent ourIntent = new Intent(mContext, Login.class);
+		mContext.startActivity(ourIntent);
+		((Activity) mContext).finish();
 	}
 
+	DialogInterface.OnCancelListener progressDialogCancelListener() {
+		return new DialogInterface.OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				// Cancel all pending requests when user presses back button.
+				MyVolley.getInstance().cancelPendingRequests(mContext.getClass().getName());
+				MyVolley.getInstance().cancelPendingRequests("LOGOUT");
+			}
+		};
+
+	}
+	
+	private void LoginWithNewHiddenData()
+	{
+		Log.i(getClass().getName(),"Collecting hidden data...");
+		String mURL = "https://academics.ddn.upes.ac.in/upes/";
+		StringRequest request = new StringRequest(Method.GET,
+				mURL,
+				getHiddenDataSuccessListener(),
+				myErrorListener()) {
+
+			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
+				Map<String, String> headers = new HashMap<String, String>();
+				headers.put("Accept-Charset", charset);
+				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
+				return headers;
+			};
+		};
+		request.setShouldCache(false);
+		request.setPriority(Priority.HIGH);
+		request.setRetryPolicy(new DefaultRetryPolicy(1500, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+		MyVolley.getInstance().addToRequestQueue(request,mContext.getClass().getName());
+	}
+
+	private Response.Listener<String> getHiddenDataSuccessListener() {
+		return new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {
+
+				Log.i(getClass().getName(), "Collected hidden data.");
+				Document doc = Jsoup.parse(response);
+				Log.i(getClass().getName(),"Parsing hidden data...");
+
+				// Get Hidden values
+				Map<String, String> data = new HashMap<String, String>();
+				Elements hiddenvalues = doc.select("input[type=hidden]");
+				for(Element hiddenvalue : hiddenvalues)
+				{
+					String name = hiddenvalue.attr("name");
+					String val = hiddenvalue.attr("value");
+					if(name.length()!=0 && val.length()!=0)
+					{
+						data.put(name, val);
+					}
+				}
+				Log.i(getClass().getName(), "Parsed hidden data.");
+				Login(mUsername, mPassword, mCaptcha, data);
+			}
+		};
+	}
+	
 	private Response.ErrorListener myErrorListener() {
 		return new Response.ErrorListener() {
 			@Override

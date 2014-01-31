@@ -17,11 +17,11 @@
         android:allowClearUserData="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.shalzz.attendance.Splash"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Sherlock.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,37 +30,49 @@
         </activity>
         <activity
             android:name="com.shalzz.attendance.Login"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="Login" >
+            android:label="Login"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
             <intent-filter>
-                <action android:name="com.g.o.d.shalzz.attendance.MAIN" />
+                <action android:name="com.shalzz.attendance.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.shalzz.attendance.Attendance"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="@string/app_name" >
+            android:label="Attendance"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
             <intent-filter>
-                <action android:name="com.g.o.d.shalzz.attendance.DISPLAYATTEN" />
+                <action android:name="com.shalzz.attendance.DISPLAYATTEN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
+        <activity 
+            android:parentActivityName="com.shalzz.attendance.Attendance"
             android:name="com.shalzz.attendance.Settings"
-            android:label="Settings" >
+            android:label="Settings"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shalzz.attendance.Attendance" />
         </activity>
         <activity
+            android:parentActivityName="com.shalzz.attendance.Settings"
             android:name="com.shalzz.attendance.AboutUs"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="@string/app_name" >
+            android:label="About"
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
             <intent-filter>
-                <action android:name="com.g.o.d.shalzz.attendance.ABOUT" />
+                <action android:name="com.shalzz.attendance.ABOUT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <!-- Parent activity meta-data to support API level 7+ -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shalzz.attendance.Settings" />
         </activity>
     </application>
 

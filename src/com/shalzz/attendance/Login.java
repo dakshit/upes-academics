@@ -2,11 +2,14 @@ package com.shalzz.attendance;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.http.protocol.HTTP;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request.Priority;
 import com.android.volley.Response;
@@ -14,11 +17,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.Request.Method;
 import com.android.volley.toolbox.StringRequest;
 import com.shalzz.attendance.R;
+
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,7 +32,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Login extends ActionBarActivity implements CaptchaDialogFragment.CaptchaDialogListener{
+public class Login extends SherlockFragmentActivity implements CaptchaDialogFragment.CaptchaDialogListener{
 
 	private EditText etSapid;
 	private EditText etPass;
