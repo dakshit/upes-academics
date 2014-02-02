@@ -21,6 +21,7 @@ import com.shalzz.attendance.R;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -44,9 +45,19 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);		
-
 		setContentView(R.layout.activity_main);
 
+		MyPreferencesManager settings = new MyPreferencesManager(this);
+		boolean loggedin = settings.getLoginStatus();
+		settings.getPersistentCookies();
+		
+		if(loggedin) {
+			Log.i(myTag, "Starting Attendance Activity");
+			Intent intent = new Intent(Login.this, Attendance.class);
+			startActivity(intent);		
+			finish();
+		}
+		
 		// Reference to the layout components
 		etSapid = (EditText) findViewById(R.id.etSapid);
 		etPass = (EditText) findViewById(R.id.etPass);

@@ -57,13 +57,13 @@ public class Attendance extends SherlockExpandableListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.attenview);
-		
+
 		ExpandableListView listview = getExpandableListView();
 		LayoutInflater inflater = this.getLayoutInflater();
 
 		header=inflater.inflate(R.layout.list_header, null);
 		listview.addHeaderView(header);
-		
+
 		footer=inflater.inflate(R.layout.list_footer, null);
 		listview.addFooterView(footer);
 
@@ -123,40 +123,37 @@ public class Attendance extends SherlockExpandableListActivity {
 			getAttendance();
 		}
 	}
-	
+
 	private void updateHeaderNFooter() {
-		
+
 		TextView tvPercent = (TextView) footer.findViewById(R.id.tvTotalPercent);
 		TextView tvClasses = (TextView) footer.findViewById(R.id.tvClass);
 		ProgressBar pbPercent = (ProgressBar) footer.findViewById(R.id.pbTotalPercent);
 		DatabaseHandler db = new DatabaseHandler(Attendance.this);
 		ListFooter listfooter = db.getListFooter();
 		Float percent = listfooter.getPercentage();
-		
+
+
+		Rect bounds = pbPercent.getProgressDrawable().getBounds();
 		if(percent<67.0) {
-			Rect bounds = pbPercent.getProgressDrawable().getBounds();
-			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_red));
-			pbPercent.getProgressDrawable().setBounds(bounds);
+			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_amber));
 		}
 		else if(percent<75.0) {
-			Rect bounds = pbPercent.getProgressDrawable().getBounds();
-			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_amber));
-			pbPercent.getProgressDrawable().setBounds(bounds);
+			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow));
 		}
 		else {
-			Rect bounds = pbPercent.getProgressDrawable().getBounds();
-			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_green));
-			pbPercent.getProgressDrawable().setBounds(bounds);
+			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_neon_green));
 		}
+		pbPercent.getProgressDrawable().setBounds(bounds);
 
 		tvPercent.setText(listfooter.getPercentage()+"%");
 		tvClasses.setText(listfooter.getAttended().intValue()+"/"+listfooter.getHeld().intValue());
 		pbPercent.setProgress(percent.intValue());
-		
+
 		TextView tvName = (TextView) header.findViewById(R.id.tvName);
 		TextView tvSap = (TextView) header.findViewById(R.id.tvSAP);
 		TextView tvcourse = (TextView) header.findViewById(R.id.tvCourse);
-		
+
 		ListHeader listheader = db.getListHeader();
 		tvName.setText(listheader.getName());
 		tvSap.setText(String.valueOf(listheader.getSAPId()));
@@ -203,6 +200,8 @@ public class Attendance extends SherlockExpandableListActivity {
 
 				Log.i(Attendance.class.getName(), "Parsing response...");
 				Document doc = Jsoup.parse(response);
+				System.out.println(doc.text().toString());
+				System.out.println(doc.getElementsByTag("title").get(0).text());
 
 				Elements tddata = doc.select("td");
 				ListHeader header = new ListHeader();
@@ -211,6 +210,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				if(doc.getElementsByTag("title").get(0).text().equals("UPES - Home"))
 				{
 					// TODO: relogin
+					Toast.makeText(Attendance.this, "It seems your session has expired.\nPlease Login again.", Toast.LENGTH_LONG).show();
 				}
 				else if (tddata != null && tddata.size() > 0)
 				{
@@ -257,31 +257,31 @@ public class Attendance extends SherlockExpandableListActivity {
 						}
 						++i;
 					}
+
+					Elements total = doc.select("th");
+					ListFooter footer = new ListFooter();
+					footer.setAttended(Float.parseFloat(total.get(10).text()));
+					footer.setHeld(Float.parseFloat(total.get(9).text()));
+					footer.setPercentage(Float.parseFloat(total.get(12).text()));
+					DatabaseHandler db = new DatabaseHandler(Attendance.this);
+					db.addOrUpdateListFooter(footer);
+					db.addOrUpdateListHeader(header);
+
+					Log.i(Attendance.class.getName(), "Response parsing complete.");
+
+					for(i=0;i<claHeld.size();i++)
+					{
+						Subject subject = new Subject(i+1, 
+								subjectName.get(i),
+								claHeld.get(i),
+								claAttended.get(i),
+								abDates.get(i),
+								percentage.get(i),
+								projPer.get(i));
+						db.addOrUpdateSubject(subject);
+					}
+					db.close();
 				}
-
-				Elements total = doc.select("th");
-				ListFooter footer = new ListFooter();
-				footer.setAttended(Float.parseFloat(total.get(10).text()));
-				footer.setHeld(Float.parseFloat(total.get(9).text()));
-				footer.setPercentage(Float.parseFloat(total.get(12).text()));
-				DatabaseHandler db = new DatabaseHandler(Attendance.this);
-				db.addOrUpdateListFooter(footer);
-				db.addOrUpdateListHeader(header);
-
-				Log.i(Attendance.class.getName(), "Response parsing complete.");
-
-				for(i=0;i<claHeld.size();i++)
-				{
-					Subject subject = new Subject(i+1, 
-							subjectName.get(i),
-							claHeld.get(i),
-							claAttended.get(i),
-							abDates.get(i),
-							percentage.get(i),
-							projPer.get(i));
-					db.addOrUpdateSubject(subject);
-				}
-				db.close();
 
 				setAttendance();
 				dismissProgressDialog();
@@ -311,19 +311,19 @@ public class Attendance extends SherlockExpandableListActivity {
 		};
 
 	}
-	
+
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-	    if (DEVICE_VERSION < DEVICE_HONEYCOMB) {
-	        if (event.getAction() == KeyEvent.ACTION_UP &&
-	            keyCode == KeyEvent.KEYCODE_MENU) {
-	            openOptionsMenu();
-	            return true;
-	        }
-	    }
-	    return super.onKeyUp(keyCode, event);
+		if (DEVICE_VERSION < DEVICE_HONEYCOMB) {
+			if (event.getAction() == KeyEvent.ACTION_UP &&
+					keyCode == KeyEvent.KEYCODE_MENU) {
+				openOptionsMenu();
+				return true;
+			}
+		}
+		return super.onKeyUp(keyCode, event);
 	}
-	
+
 	/**
 	 * Closes the default user soft keyboard.
 	 * @param searchView
@@ -340,34 +340,34 @@ public class Attendance extends SherlockExpandableListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getSupportMenuInflater().inflate(R.menu.main, menu);
-	    MenuItem searchItem = menu.findItem(R.id.menu_search);
-	    final SearchView searchView = (SearchView) searchItem.getActionView();
-	    searchView.setQueryHint("Search for subjects");
-	    
-	    searchItem.setOnActionExpandListener(new OnActionExpandListener() {
-	        @Override
-	        public boolean onMenuItemActionCollapse(MenuItem item) {
-	        	DatabaseHandler db = new DatabaseHandler(Attendance.this);
+		MenuItem searchItem = menu.findItem(R.id.menu_search);
+		final SearchView searchView = (SearchView) searchItem.getActionView();
+		searchView.setQueryHint("Search for subjects");
+
+		searchItem.setOnActionExpandListener(new OnActionExpandListener() {
+			@Override
+			public boolean onMenuItemActionCollapse(MenuItem item) {
+				DatabaseHandler db = new DatabaseHandler(Attendance.this);
 				List<Subject> subjects = db.getAllOrderedSubjects();
 				setListAdapter(new ExpandableListAdapter(Attendance.this,subjects));
-	            return true;  // Return true to collapse action view
-	        }
+				return true;  // Return true to collapse action view
+			}
 
-	        @Override
-	        public boolean onMenuItemActionExpand(MenuItem item) {
-	            // Do something when expanded
-	            return true;  // Return true to expand action view
-	        }
-	    });
-	    
-	    searchView.setOnQueryTextListener(new OnQueryTextListener() {
-			
+			@Override
+			public boolean onMenuItemActionExpand(MenuItem item) {
+				// Do something when expanded
+				return true;  // Return true to expand action view
+			}
+		});
+
+		searchView.setOnQueryTextListener(new OnQueryTextListener() {
+
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
 				closeKeyboard(searchView);
 				return false;
 			}
-			
+
 			@Override
 			public boolean onQueryTextChange(String arg0) {
 				DatabaseHandler db = new DatabaseHandler(Attendance.this);

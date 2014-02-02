@@ -39,7 +39,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 			convertView = inflater.inflate(R.layout.list_group_item_amber,null);
 		}
 		else if(percent<75.0) {
-			convertView = inflater.inflate(R.layout.list_group_item_amber,null);
+			convertView = inflater.inflate(R.layout.list_group_item_yellow,null);
 		}
 		else{
 			convertView = inflater.inflate(R.layout.list_group_item_green,null);
@@ -86,7 +86,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 		tvProjected.setText(mSubjects.get(groupPosition).getProjectedPercentage());
 		tvAbsent.setText("Days Absent: "+mSubjects.get(groupPosition).getAbsentDates());		
 
-		if (percent<67.0 && held!=0)
+		if (percent<67 && held!=0)
 		{
 			int x = (2*held) - (3*attend);
 			tvReach.setText("Attend "+x+" more classes to reach 67%");
@@ -94,7 +94,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 			tvReach.setVisibility(View.VISIBLE);
 			ivAlert.setVisibility(View.VISIBLE);
 		}
-		else if(percent<75.0 && held!=0)
+		else if(percent<75 && held!=0)
 		{
 			int x = (3*held) - (4*attend);
 			tvReach.setText("Attend "+x+" more classes to reach 75%");

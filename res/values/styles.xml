@@ -17,10 +17,5 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
-    <style name="Theme.Example" parent="@style/Theme.Sherlock.Light.DarkActionBar">
-        <item name="popupMenuStyle">@style/TextAppearance.Sherlock.Widget.PopupMenu.Small</item>
-
-    </style>
 
 </resources>

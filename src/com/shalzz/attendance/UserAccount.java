@@ -55,7 +55,7 @@ public class UserAccount {
 	 * Displays the default Progress Dialog.
 	 * @param mMessage
 	 */
-	private void showProgressDialog(String mMessage) {
+	private void showProgressDialog(String mMessage,boolean cancable) {
 		// lazy initialize
 		if(pd==null)
 		{
@@ -64,7 +64,7 @@ public class UserAccount {
 			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			pd.setMessage(mMessage);
 			pd.setIndeterminate(true);
-			pd.setCancelable(true);
+			pd.setCancelable(cancable);
 			pd.setOnCancelListener(progressDialogCancelListener());
 		}
 		pd.show();
@@ -113,7 +113,7 @@ public class UserAccount {
 		mUsername = username;
 		mPassword = password;
 		mCaptcha = captcha;
-		showProgressDialog("Logging in...");
+		showProgressDialog("Logging in...",false);
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php";
 		StringRequest request = new StringRequest(Method.POST,
 				mURL,
@@ -198,7 +198,7 @@ public class UserAccount {
 	 */
 	public void Logout() {
 
-		showProgressDialog("Logging out...");
+		showProgressDialog("Logging out...",true);
 		Log.i(mContext.getClass().getName(), "Logging out...");
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=logout";

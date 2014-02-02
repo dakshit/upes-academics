@@ -35,7 +35,7 @@ public class MyPreferencesManager {
 		Iterator<String> keyset = pcookies.getAll().keySet().iterator();
 		if(keyset.hasNext())
 		{
-			Log.i(Splash.class.getName(), "Persisten cookies found.");
+			Log.i(mContext.getClass().getName(), "Persisten cookies found.");
 			while(keyset.hasNext())
 			{
 				String cookiename = keyset.next();
