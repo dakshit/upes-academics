@@ -18,20 +18,18 @@ import com.android.volley.Request.Method;
 import com.android.volley.toolbox.StringRequest;
 import com.shalzz.attendance.R;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import android.os.Bundle;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Login extends SherlockFragmentActivity implements CaptchaDialogFragment.CaptchaDialogListener{
 
@@ -47,22 +45,11 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 		super.onCreate(savedInstanceState);		
 		setContentView(R.layout.activity_main);
 
-		MyPreferencesManager settings = new MyPreferencesManager(this);
-		boolean loggedin = settings.getLoginStatus();
-		settings.getPersistentCookies();
-		
-		if(loggedin) {
-			Log.i(myTag, "Starting Attendance Activity");
-			Intent intent = new Intent(Login.this, Attendance.class);
-			startActivity(intent);		
-			finish();
-		}
-		
 		// Reference to the layout components
 		etSapid = (EditText) findViewById(R.id.etSapid);
 		etPass = (EditText) findViewById(R.id.etPass);
 		bLogin = (Button) findViewById(R.id.bLogin);
-		
+
 		getHiddenData();
 
 		// Shows the CaptchaDialog when user presses 'Done' on keyboard.
@@ -99,33 +86,21 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 	public boolean isValid() {		
 		String sapid = etSapid.getText().toString();
 		String password = etPass.getText().toString();	
-		
+
 		if(sapid.isEmpty() || sapid.length()!=9) {
 			etSapid.requestFocus();
 			etSapid.setError("SAP ID should be of 9 digits");
-			showKeyboard(etSapid);
+			Miscellanius.showKeyboard(this,etSapid);
 			return false;
 		}
 		else if (password.isEmpty()) {
 			etPass.requestFocus();
 			etPass.setError("Password cannot be empty");
-			showKeyboard(etPass);
+			Miscellanius.showKeyboard(this,etPass);
 			return false;
 		}
 		else
 			return true;
-	}
-
-	/**
-	 * Shows the default user soft keyboard.
-	 * @param mTextView
-	 */
-	public void showKeyboard(EditText mTextView) {
-		InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-		if (imm != null) {
-			// only will trigger it if no physical keyboard is open
-			imm.showSoftInput(mTextView, 0);
-		}
 	}
 
 	/**
@@ -144,17 +119,17 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 		dialog.dismiss();
 
 		if (!Captxt.getText().toString().isEmpty()) {
-			
+
 			new UserAccount(Login.this)
 			.Login(etSapid.getText().toString(), 
-				   etPass.getText().toString(),
-				   Captxt.getText().toString(),
-				   data);		
+					etPass.getText().toString(),
+					Captxt.getText().toString(),
+					data);		
 		}
 		else {
-			Toast.makeText(Login.this, "Captcha cannot be empty", Toast.LENGTH_LONG).show();
+			Crouton.makeText(Login.this,  "Captcha cannot be empty", Style.ALERT).show();
 		}
-		
+
 	}
 
 	private void getHiddenData()
@@ -203,13 +178,13 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 			}
 		};
 	}
-	
+
 	private Response.ErrorListener myErrorListener() {
 		return new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				String msg = VolleyErrorHelper.getMessage(error, Login.this);
-				Toast.makeText(Login.this, msg, Toast.LENGTH_LONG).show();			
+				Crouton.makeText(Login.this,  msg, Style.ALERT).show();	
 				Log.e(getClass().getName(), msg);
 			}
 		};
@@ -218,6 +193,7 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 	@Override
 	protected void onDestroy() {
 		MyVolley.getInstance().cancelPendingRequests(myTag);
+		Crouton.cancelAllCroutons();
 		super.onDestroy();
 	}
 }

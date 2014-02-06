@@ -4,6 +4,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.shalzz.attendance.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CaptchaDialogFragment extends DialogFragment{
 
@@ -139,7 +139,7 @@ public class CaptchaDialogFragment extends DialogFragment{
 				new ImageLoader.ImageListener() {
 
 			final ImageView view = ivCapImg;
-			final int defaultImageResId = R.drawable.spinner_black_48;
+			final int defaultImageResId = 5;
 			final int errorImageResId = R.drawable.ic_menu_report_image;
 			@Override
 			public void onErrorResponse(VolleyError error) {
@@ -149,7 +149,6 @@ public class CaptchaDialogFragment extends DialogFragment{
 					view.setScaleType(ImageView.ScaleType.CENTER);
 					view.setImageResource(errorImageResId);
 					String msg = VolleyErrorHelper.getMessage(error, getActivity());
-					Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();			
 					Log.e(getActivity().getClass().getName(), msg);
 				}
 			}
@@ -160,6 +159,7 @@ public class CaptchaDialogFragment extends DialogFragment{
 					pbar.setVisibility(View.INVISIBLE);
 					view.setVisibility(View.VISIBLE);
 					view.setImageBitmap(response.getBitmap());
+					view.setScaleType(ImageView.ScaleType.FIT_XY);
 					Log.i(Login.class.getName(), "Loaded captcha image.");
 				} else if (defaultImageResId != 0) {
 					pbar.setVisibility(ProgressBar.VISIBLE);

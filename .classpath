@@ -18,5 +18,10 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="C:/Users/shalzz/Documents/Work Space/Attendance/libs/crouton-1.8.3.jar" sourcepath="C:/Users/shalzz/Documents/Work Space/Attendance/libs/crouton-1.8.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/shalzz/Documents/Work%20Space/Attendance/libs/crouton-1.8.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

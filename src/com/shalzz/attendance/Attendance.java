@@ -11,25 +11,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockExpandableListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -43,14 +37,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 public class Attendance extends SherlockExpandableListActivity {
 
 	private String charset = HTTP.ISO_8859_1;
-	private ProgressDialog pd;
 	private View footer;
 	private View header;
-	public static final int DEVICE_VERSION   = Build.VERSION.SDK_INT;
-	public static final int DEVICE_HONEYCOMB = Build.VERSION_CODES.HONEYCOMB;
 	// TODO: add myTag
 
 	@Override
@@ -69,54 +63,46 @@ public class Attendance extends SherlockExpandableListActivity {
 
 		setAttendance();
 		//getAttendance();
-
-	}
-
-	/**
-	 * Displays the default Progress Dialog.
-	 * @param mMessage
-	 */
-	private void showProgressDialog(String mMessage) {
-		// lazy initialize
-		if(pd==null)
-		{
-			// Setup the Progress Dialog
-			pd = new ProgressDialog(this);
-			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			pd.setMessage(mMessage);
-			pd.setIndeterminate(true);
-			pd.setOnCancelListener(progressDialogCancelListener());
-			pd.setCancelable(true);
-		}
-		// if there's a progressDialog dismiss it.
-		dismissProgressDialog();
-		pd.show();
-	}
-
-	/**
-	 * Dismisses the Progress Dialog.
-	 */
-	private void dismissProgressDialog() {
-		if(pd!=null)
-			pd.dismiss();
 	}
 
 	private void setAttendance() {
 		DatabaseHandler db = new DatabaseHandler(Attendance.this);
 		if(db.getRowCount()>0)
 		{
-			updateHeaderNFooter();			
+			updateHeaderNFooter();
 			SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 			boolean alpha = sharedPref.getBoolean("alpha_subject_order", true);
-			List<Subject> subjects;
+			boolean expandLimit = sharedPref.getBoolean("subjects_expanded_limit", false);
 
-			if(alpha) {
+			List<Subject> subjects;
+			if(alpha) 
 				subjects = db.getAllOrderedSubjects();
-			}
-			else {
+			else 
 				subjects = db.getAllSubjects();
+			final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this,subjects);
+			final ExpandableListView listview = getExpandableListView();
+			setListAdapter(mAdapter);
+
+			if(expandLimit) {
+				listview.setOnGroupExpandListener(new OnGroupExpandListener() {
+					public void onGroupExpand(int groupPosition) {
+						int len = mAdapter.getGroupCount();
+						for (int i = 0; i < len; i++) {
+							if (i != groupPosition) {
+								listview.collapseGroup(i);
+							}
+						}
+					}
+				});
 			}
-			setListAdapter(new ExpandableListAdapter(this,subjects));
+			else
+			{
+				listview.setOnGroupExpandListener(new OnGroupExpandListener() {
+					public void onGroupExpand(int groupPosition) {
+						return;
+					}
+				});
+			}
 		}
 		else
 		{
@@ -164,7 +150,7 @@ public class Attendance extends SherlockExpandableListActivity {
 
 		DatabaseHandler db = new DatabaseHandler(Attendance.this);
 		if(db.getRowCount()<=0)
-			showProgressDialog("Loading your attendance...");
+			Miscellanius.showProgressDialog(this, "Loading your attendance...", true, progressDialogCancelListener());
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631";
 		StringRequest request = new StringRequest(Method.POST,
@@ -204,16 +190,17 @@ public class Attendance extends SherlockExpandableListActivity {
 				System.out.println(doc.getElementsByTag("title").get(0).text());
 
 				Elements tddata = doc.select("td");
-				ListHeader header = new ListHeader();
-				int i=0;
 
 				if(doc.getElementsByTag("title").get(0).text().equals("UPES - Home"))
 				{
 					// TODO: relogin
-					Toast.makeText(Attendance.this, "It seems your session has expired.\nPlease Login again.", Toast.LENGTH_LONG).show();
+					String msg ="It seems your session has expired.\nPlease Login again.";
+					Crouton.makeText(Attendance.this,  msg, Style.ALERT).show();
 				}
 				else if (tddata != null && tddata.size() > 0)
 				{
+					int i=0;
+					ListHeader header = new ListHeader();
 					for(Element element : tddata)
 					{
 						if(i==5)					
@@ -284,7 +271,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				}
 
 				setAttendance();
-				dismissProgressDialog();
+				Miscellanius.dismissProgressDialog();
 			}
 		};
 	}
@@ -294,9 +281,10 @@ public class Attendance extends SherlockExpandableListActivity {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				String msg = VolleyErrorHelper.getMessage(error, Attendance.this);
-				Toast.makeText(Attendance.this, msg, Toast.LENGTH_LONG).show();
+				Crouton.clearCroutonsForActivity(Attendance.this);
+				Crouton.makeText(Attendance.this,  msg, Style.ALERT).show();
 				Log.e(Login.class.getName(), msg);
-				dismissProgressDialog();
+				Miscellanius.dismissProgressDialog();
 			}
 		};
 	}
@@ -306,34 +294,11 @@ public class Attendance extends SherlockExpandableListActivity {
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				// Cancel all pending requests when user presses back button.
+				Crouton.makeText(Attendance.this, "Network Request canceled", Style.INFO).show();
 				MyVolley.getInstance().cancelPendingRequests("ATTENDENCE");
 			}
 		};
 
-	}
-
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		if (DEVICE_VERSION < DEVICE_HONEYCOMB) {
-			if (event.getAction() == KeyEvent.ACTION_UP &&
-					keyCode == KeyEvent.KEYCODE_MENU) {
-				openOptionsMenu();
-				return true;
-			}
-		}
-		return super.onKeyUp(keyCode, event);
-	}
-
-	/**
-	 * Closes the default user soft keyboard.
-	 * @param searchView
-	 */
-	public void closeKeyboard(SearchView searchView) {
-		InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-		if (imm != null) {
-			// only will trigger it if no physical keyboard is open
-			imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-		}
 	}
 
 	@Override
@@ -364,7 +329,7 @@ public class Attendance extends SherlockExpandableListActivity {
 
 			@Override
 			public boolean onQueryTextSubmit(String arg0) {
-				closeKeyboard(searchView);
+				Miscellanius.closeKeyboard(Attendance.this, searchView);
 				return false;
 			}
 
@@ -392,7 +357,7 @@ public class Attendance extends SherlockExpandableListActivity {
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
-			showProgressDialog("Refreshing your attendance...");
+			Miscellanius.showProgressDialog(this, "Refreshing your attendance...", true, progressDialogCancelListener());
 			getAttendance();
 		}
 		return super.onOptionsItemSelected(item);
@@ -407,6 +372,7 @@ public class Attendance extends SherlockExpandableListActivity {
 	@Override
 	protected void onDestroy() {
 		MyVolley.getInstance().cancelPendingRequests("ATTENDENCE");
+		Crouton.cancelAllCroutons();
 		super.onDestroy();
 	}
 }

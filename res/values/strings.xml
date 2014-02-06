@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Upes Academics</string>
+    <string name="app_version">1.0</string>
     <string name="UserAgent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36</string>
     <string name="menu_logout">Log Out</string>
     <string name="menu_settings">Settings</string>
@@ -13,7 +14,7 @@
     <string name="generic_error">Network Error occurred. Please try again later.</string>
     <string name="incorrect_captcha">alert(\'Please enter correct code.\'); window.history.go(-1);</string>
     <string name="incorrect_user_or_pass">alert(\'Incorrect username or password. Please try again.\'); window.history.go(-1);</string>
-    <string name="description">© 2013–2014 \n All rights reserved. \n Developed by  \n Shaleen Jain \n Group of Developers</string>
+    <string name="description">© 2013–2014 \n All rights reserved. \n Developed by  \n Shaleen Jain </string>
     <string name="contact">Contact Us:\n shaleen.jain95@gmail.com \n www.groupofdevelopers.com</string>
     <dimen name="progress_bar_height">10dp</dimen>
 </resources>

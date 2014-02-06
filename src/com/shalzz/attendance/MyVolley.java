@@ -9,7 +9,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageCache;
-import com.android.volley.toolbox.OkHttpStack;
 import com.android.volley.toolbox.Volley;
 import com.shalzz.attendance.R;
 import android.app.Application;
@@ -73,7 +72,7 @@ public class MyVolley extends Application {
 		// lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
 		if(mRequestQueue == null)
-			mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new OkHttpStack());
+			mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new MyOkHttpStack());
 		return mRequestQueue;
 	}
 	

@@ -7,6 +7,11 @@
         android:summaryOn="Display subjects alphabetically"
         android:summaryOff="Display subjects chronologically"
         android:defaultValue="true"/>
+    <CheckBoxPreference 
+        android:key="subjects_expanded_limit"
+        android:title="Limit Expanded Subjects"
+        android:summary="Allow only one subject to be expanded at a time."
+        android:defaultValue="false"/>
     
     <PreferenceCategory
         android:key="pref_key_storage_about"
@@ -18,9 +23,14 @@
             <intent android:action="com.shalzz.attendance.ABOUT" />
         </Preference>    
         <Preference
+            android:key="pref_info_contact"
+            android:title="Contact Us"
+            android:summary="Send feedback or report a bug.">
+        </Preference> 
+        <Preference
             android:key="pref_info_version"
             android:title="Build Version"
-            android:summary="1.0" />
+            android:summary="@string/app_version" />
     </PreferenceCategory>
 
 </PreferenceScreen>
