@@ -11,6 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,10 +22,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockExpandableListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -45,8 +49,36 @@ public class Attendance extends SherlockExpandableListActivity {
 	private String charset = HTTP.ISO_8859_1;
 	private View footer;
 	private View header;
+	private ProgressDialog pd = null;
 	// TODO: add myTag
 
+	/**
+	 * Displays the default Progress Dialog.
+	 * @param mMessage
+	 */
+	private void showProgressDialog(String mMessage,boolean cancable) {
+		// lazy initialize
+		if(pd==null)
+		{
+			// Setup the Progress Dialog
+			pd = new ProgressDialog(this);
+			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pd.setMessage(mMessage);
+			pd.setIndeterminate(true);
+			pd.setCancelable(cancable);
+			pd.setOnCancelListener(progressDialogCancelListener());
+		}
+		pd.show();
+	}
+
+	/**
+	 * Dismisses the Progress Dialog.
+	 */
+	protected void dismissProgressDialog() {
+		if(pd!=null)
+			pd.dismiss();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -150,7 +182,7 @@ public class Attendance extends SherlockExpandableListActivity {
 
 		DatabaseHandler db = new DatabaseHandler(Attendance.this);
 		if(db.getRowCount()<=0)
-			Miscellanius.showProgressDialog(this, "Loading your attendance...", true, progressDialogCancelListener());
+			showProgressDialog("Loading your attendance...", true);
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631";
 		StringRequest request = new StringRequest(Method.POST,
@@ -271,7 +303,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				}
 
 				setAttendance();
-				Miscellanius.dismissProgressDialog();
+				dismissProgressDialog();
 			}
 		};
 	}
@@ -284,7 +316,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				Crouton.clearCroutonsForActivity(Attendance.this);
 				Crouton.makeText(Attendance.this,  msg, Style.ALERT).show();
 				Log.e(Login.class.getName(), msg);
-				Miscellanius.dismissProgressDialog();
+				dismissProgressDialog();
 			}
 		};
 	}
@@ -357,7 +389,7 @@ public class Attendance extends SherlockExpandableListActivity {
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
-			Miscellanius.showProgressDialog(this, "Refreshing your attendance...", true, progressDialogCancelListener());
+			showProgressDialog("Refreshing your attendance...", true);
 			getAttendance();
 		}
 		return super.onOptionsItemSelected(item);

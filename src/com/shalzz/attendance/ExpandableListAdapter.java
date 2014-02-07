@@ -58,6 +58,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 		return convertView;
 	}
 
+	/**
+	 * Gets the number of child views. Fixed to one.
+	 */
 	@Override
 	public int getChildrenCount(int groupPosition) {
 		return 1;

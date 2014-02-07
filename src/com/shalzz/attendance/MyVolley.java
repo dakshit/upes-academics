@@ -4,6 +4,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.security.KeyStore;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
@@ -11,7 +12,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.Volley;
 import com.shalzz.attendance.R;
+
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -39,6 +42,11 @@ public class MyVolley extends Application {
 	private ImageLoader mImageLoader;
 	
 	/**
+	 * Application Context.
+	 */
+	private static  Context mContext;
+	
+	/**
      * A singleton instance of the application class for easy access in other places
      */
     private static MyVolley sInstance;
@@ -46,7 +54,8 @@ public class MyVolley extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-
+		MyVolley.mContext = getApplicationContext();
+		
 		// Initialize the singleton
 		sInstance = this;
 		
@@ -63,6 +72,10 @@ public class MyVolley extends Application {
      */
 	 public static synchronized MyVolley getInstance() {
 	        return sInstance;
+	    }
+	 
+	 public static Context getAppContext() {
+	        return MyVolley.mContext;
 	    }
 
 	/**

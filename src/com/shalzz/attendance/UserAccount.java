@@ -10,6 +10,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +36,8 @@ public class UserAccount {
 	private String mPassword;
 	private String mCaptcha;
 	private int retryCount=0;
+	private AlertDialog.Builder builder = null;
+	private ProgressDialog pd = null;
 
 	/**
 	 * The activity context used to Log the user from
@@ -46,6 +50,57 @@ public class UserAccount {
 	 */
 	public UserAccount(Context context) {
 		mContext = context;
+	}
+	
+
+	/**
+	 * Displays the default Progress Dialog.
+	 * @param mMessage
+	 */
+	private void showProgressDialog(String mMessage,boolean cancable) {
+		// lazy initialize
+		if(pd==null)
+		{
+			// Setup the Progress Dialog
+			pd = new ProgressDialog(mContext);
+			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pd.setMessage(mMessage);
+			pd.setIndeterminate(true);
+			pd.setCancelable(cancable);
+			pd.setOnCancelListener(progressDialogCancelListener());
+		}
+		pd.show();
+	}
+
+	/**
+	 * Dismisses the Progress Dialog.
+	 */
+	protected void dismissProgressDialog() {
+		if(pd!=null)
+			pd.dismiss();
+	}
+	
+	/**
+	 * Displays a basic Alert Dialog.
+	 * @param mMessage
+	 */
+	private void showAlertDialog(String mMessage) {
+		// lazy initialize
+		if(builder==null)
+		{
+			builder = new AlertDialog.Builder(mContext);
+			builder.setCancelable(true);
+			builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+		}
+		dismissProgressDialog();
+		builder.setMessage(mMessage);
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	/**
@@ -61,7 +116,7 @@ public class UserAccount {
 		mPassword = password;
 		mCaptcha = captcha;
 		
-		Miscellanius.showProgressDialog(mContext, "Logging in...", false, progressDialogCancelListener());
+		showProgressDialog("Logging in...", false);
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php";
 		StringRequest request = new StringRequest(Method.POST,
 				mURL,
@@ -102,11 +157,11 @@ public class UserAccount {
 
 				if(document.data().toString().equals(mContext.getString(R.string.incorrect_captcha)))
 				{
-					Miscellanius.showAlertDialog(mContext, "Incorrect Captcha!\nPlease try again.");
+					showAlertDialog("Incorrect Captcha!\nPlease try again.");
 				}
 				else if(document.data().toString().equals(mContext.getString(R.string.incorrect_user_or_pass)))
 				{
-					Miscellanius.showAlertDialog(mContext, "Incorrect username or password. Please try again");
+					showAlertDialog("Incorrect username or password. Please try again");
 
 				}
 				else if(document.getElementsByTag("title").get(0).text().equals("UPES - Home"))
@@ -123,7 +178,7 @@ public class UserAccount {
 					}
 					else
 					{
-						Miscellanius.dismissProgressDialog();
+						dismissProgressDialog();
 						Crouton.makeText((Activity) mContext,  "Error! Please try again later", Style.ALERT).show();	
 					}
 				}
@@ -133,7 +188,7 @@ public class UserAccount {
 					settings.savePersistentCookies();
 					settings.saveUser(mUsername, mPassword);
 
-					Miscellanius.dismissProgressDialog();
+					dismissProgressDialog();
 					Intent ourIntent = new Intent(mContext, Attendance.class);
 					mContext.startActivity(ourIntent);
 					((Activity) mContext).finish();
@@ -147,7 +202,7 @@ public class UserAccount {
 	 */
 	public void Logout() {
 
-		Miscellanius.showProgressDialog(mContext, "Logging out...", true, progressDialogCancelListener());
+		showProgressDialog( "Logging out...", true);
 		Log.i(mContext.getClass().getName(), "Logging out...");
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=logout";
@@ -193,7 +248,7 @@ public class UserAccount {
 		DatabaseHandler db = new DatabaseHandler(mContext);
 		db.resetTables();
 		
-		Miscellanius.dismissProgressDialog();
+		dismissProgressDialog();
 		Intent ourIntent = new Intent(mContext, Login.class);
 		mContext.startActivity(ourIntent);
 		((Activity) mContext).finish();
@@ -265,7 +320,7 @@ public class UserAccount {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				String msg = VolleyErrorHelper.getMessage(error, mContext);
-				Miscellanius.dismissProgressDialog();		
+				dismissProgressDialog();		
 				Crouton.makeText((Activity) mContext,  msg, Style.ALERT).show();		
 				Log.e(mContext.getClass().getName(), msg);
 			}

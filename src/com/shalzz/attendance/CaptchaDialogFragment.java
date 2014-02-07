@@ -53,7 +53,35 @@ public class CaptchaDialogFragment extends DialogFragment{
 					+ " must implement CaptchaDialogListener");
 		}
 	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+		// Get the layout inflater
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+
+		// Inflate and set the layout for the dialog
+		// Pass null as the parent view because its going in the dialog layout
+		builder.setView(inflater.inflate(R.layout.captcha_dialog, null))
+		.setTitle("Input Captcha")
+		.setIcon(R.drawable.ic_menu_edit)
+		.setCancelable(true)
+		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int id) {
+				// Send the positive button event back to the host activity
+				mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
+			}
+		});    
+
+		return builder.create();
+	}
+
+	/**
+	 * Called when the DialogView is started. Used to setup the onClick listeners.
+	 */
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -89,46 +117,9 @@ public class CaptchaDialogFragment extends DialogFragment{
 			}});
 	}
 
-	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-		// Get the layout inflater
-		LayoutInflater inflater = getActivity().getLayoutInflater();
-
-		// Inflate and set the layout for the dialog
-		// Pass null as the parent view because its going in the dialog layout
-		builder.setView(inflater.inflate(R.layout.captcha_dialog, null))
-		.setTitle("Input Captcha")
-		.setIcon(R.drawable.ic_menu_edit)
-		.setCancelable(true)
-		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int id) {
-				// Send the positive button event back to the host activity
-				mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
-			}
-		});    
-
-		return builder.create();
-	}
-	
 	/**
-	 * Checks if the form is valid
-	 * @return true or false
+	 * Gets the captcha image.
 	 */
-	public boolean isValid() {		
-		String captchaTxt = Captxt.getText().toString();
-		if (captchaTxt.isEmpty()) {
-			Captxt.requestFocus();
-			Captxt.setError("Password cannot be empty");
-			return false;
-		}
-		else
-			return true;
-	}
-
 	private void getImg() 
 	{
 		// TODO Set priority and timeout

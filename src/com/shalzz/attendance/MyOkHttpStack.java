@@ -2,7 +2,9 @@ package com.shalzz.attendance;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URL;
+import java.net.Proxy;
 
 import com.android.volley.toolbox.OkHttpStack;
 import com.squareup.okhttp.OkHttpClient;
@@ -23,7 +25,11 @@ public class MyOkHttpStack extends OkHttpStack{
 	  
 	@Override 
 	protected HttpURLConnection createConnection(URL url) throws IOException {
-		// return proxy connection.
-		return client.open(url);
+		if(Miscellanius.useProxy())
+		{
+			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.ddn.upes.ac.in", 8080));
+			client.setProxy(proxy);
+		}
+		return client.open(url);			
 	} 
 }
