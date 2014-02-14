@@ -20,7 +20,7 @@ public class Settings extends SherlockPreferenceActivity implements OnPreference
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        addPreferencesFromResource(R.xml.pref);
+        addPreferencesFromResource(R.xml.preferences);
         
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

@@ -5,6 +5,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.security.KeyStore;
 
+import org.apache.http.impl.client.AbstractHttpClient;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
@@ -84,9 +86,16 @@ public class MyVolley extends Application {
 	public RequestQueue getRequestQueue() {
 		// lazy initialize the request queue, the queue instance will be
         // created when it is accessed for the first time
-		if(mRequestQueue == null)
+		if(mRequestQueue == null )
 			mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new MyOkHttpStack());
 		return mRequestQueue;
+	}
+	
+	/**
+	 * Reinitializes the request queue. Used for setting or removing proxy(in this app).
+	 */
+	public void initRequestQueue() {
+		mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new MyOkHttpStack());
 	}
 	
 	/**

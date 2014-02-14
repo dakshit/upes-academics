@@ -11,8 +11,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +20,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ProgressBar;
@@ -49,35 +46,8 @@ public class Attendance extends SherlockExpandableListActivity {
 	private String charset = HTTP.ISO_8859_1;
 	private View footer;
 	private View header;
-	private ProgressDialog pd = null;
-	// TODO: add myTag
-
-	/**
-	 * Displays the default Progress Dialog.
-	 * @param mMessage
-	 */
-	private void showProgressDialog(String mMessage,boolean cancable) {
-		// lazy initialize
-		if(pd==null)
-		{
-			// Setup the Progress Dialog
-			pd = new ProgressDialog(this);
-			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			pd.setMessage(mMessage);
-			pd.setIndeterminate(true);
-			pd.setCancelable(cancable);
-			pd.setOnCancelListener(progressDialogCancelListener());
-		}
-		pd.show();
-	}
-
-	/**
-	 * Dismisses the Progress Dialog.
-	 */
-	protected void dismissProgressDialog() {
-		if(pd!=null)
-			pd.dismiss();
-	}
+	private Miscellanius misc = new Miscellanius(this);
+	private String myTag = getClass().getName();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +64,7 @@ public class Attendance extends SherlockExpandableListActivity {
 		listview.addFooterView(footer);
 
 		setAttendance();
-		//getAttendance();
+		getAttendance();
 	}
 
 	private void setAttendance() {
@@ -135,10 +105,6 @@ public class Attendance extends SherlockExpandableListActivity {
 					}
 				});
 			}
-		}
-		else
-		{
-			getAttendance();
 		}
 	}
 
@@ -182,7 +148,7 @@ public class Attendance extends SherlockExpandableListActivity {
 
 		DatabaseHandler db = new DatabaseHandler(Attendance.this);
 		if(db.getRowCount()<=0)
-			showProgressDialog("Loading your attendance...", true);
+			misc.showProgressDialog("Loading your attendance...", true, pdCancelListener());
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631";
 		StringRequest request = new StringRequest(Method.POST,
@@ -200,8 +166,8 @@ public class Attendance extends SherlockExpandableListActivity {
 		request.setShouldCache(true);
 		request.setPriority(Priority.IMMEDIATE);
 		request.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		MyVolley.getInstance().addToRequestQueue(request ,"ATTENDENCE");
-		Log.i(Attendance.class.getName(), "Request added to queue");
+		MyVolley.getInstance().addToRequestQueue(request ,myTag);
+		Log.i(myTag, "Request added to queue");
 	}
 
 	private Response.Listener<String> createMyReqSuccessListener() {
@@ -216,7 +182,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				ArrayList<String> subjectName = new ArrayList<String>();
 				ArrayList<Float> percentage = new ArrayList<Float>();
 
-				Log.i(Attendance.class.getName(), "Parsing response...");
+				Log.i(myTag, "Parsing response...");
 				Document doc = Jsoup.parse(response);
 				System.out.println(doc.text().toString());
 				System.out.println(doc.getElementsByTag("title").get(0).text());
@@ -286,7 +252,7 @@ public class Attendance extends SherlockExpandableListActivity {
 					db.addOrUpdateListFooter(footer);
 					db.addOrUpdateListHeader(header);
 
-					Log.i(Attendance.class.getName(), "Response parsing complete.");
+					Log.i(myTag, "Response parsing complete.");
 
 					for(i=0;i<claHeld.size();i++)
 					{
@@ -300,10 +266,12 @@ public class Attendance extends SherlockExpandableListActivity {
 						db.addOrUpdateSubject(subject);
 					}
 					db.close();
+					if(db.getRowCount()>0)
+						Crouton.makeText(Attendance.this, "Successfully updated attendance", Style.CONFIRM).show();
 				}
 
 				setAttendance();
-				dismissProgressDialog();
+				misc.dismissProgressDialog();
 			}
 		};
 	}
@@ -315,19 +283,19 @@ public class Attendance extends SherlockExpandableListActivity {
 				String msg = VolleyErrorHelper.getMessage(error, Attendance.this);
 				Crouton.clearCroutonsForActivity(Attendance.this);
 				Crouton.makeText(Attendance.this,  msg, Style.ALERT).show();
-				Log.e(Login.class.getName(), msg);
-				dismissProgressDialog();
+				Log.e(myTag, msg);
+				misc.dismissProgressDialog();
 			}
 		};
 	}
 
-	DialogInterface.OnCancelListener progressDialogCancelListener() {
+	DialogInterface.OnCancelListener pdCancelListener() {
 		return new DialogInterface.OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
 				// Cancel all pending requests when user presses back button.
 				Crouton.makeText(Attendance.this, "Network Request canceled", Style.INFO).show();
-				MyVolley.getInstance().cancelPendingRequests("ATTENDENCE");
+				MyVolley.getInstance().cancelPendingRequests(myTag);
 			}
 		};
 
@@ -339,7 +307,7 @@ public class Attendance extends SherlockExpandableListActivity {
 		getSupportMenuInflater().inflate(R.menu.main, menu);
 		MenuItem searchItem = menu.findItem(R.id.menu_search);
 		final SearchView searchView = (SearchView) searchItem.getActionView();
-		searchView.setQueryHint("Search for subjects");
+		searchView.setQueryHint("Search subjects");
 
 		searchItem.setOnActionExpandListener(new OnActionExpandListener() {
 			@Override
@@ -389,7 +357,7 @@ public class Attendance extends SherlockExpandableListActivity {
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
-			showProgressDialog("Refreshing your attendance...", true);
+			misc.showProgressDialog("Refreshing your attendance...", true, pdCancelListener());
 			getAttendance();
 		}
 		return super.onOptionsItemSelected(item);
@@ -403,7 +371,7 @@ public class Attendance extends SherlockExpandableListActivity {
 
 	@Override
 	protected void onDestroy() {
-		MyVolley.getInstance().cancelPendingRequests("ATTENDENCE");
+		MyVolley.getInstance().cancelPendingRequests(myTag);
 		Crouton.cancelAllCroutons();
 		super.onDestroy();
 	}

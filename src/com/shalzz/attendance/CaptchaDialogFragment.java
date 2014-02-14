@@ -109,8 +109,9 @@ public class CaptchaDialogFragment extends DialogFragment{
 		Captxt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {                    
-					mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
+				if (actionId == EditorInfo.IME_ACTION_DONE) {   
+					Miscellanius.closeKeyboard(getActivity(), Captxt);
+					mListener.onDialogPositiveClick(CaptchaDialogFragment.this); 
 					return true;
 				}
 				return false;

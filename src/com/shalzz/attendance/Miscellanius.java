@@ -17,14 +17,21 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-public abstract class Miscellanius {
+public class Miscellanius {
 
+	private AlertDialog.Builder builder = null;
+	private ProgressDialog pd = null;
+	private Context mContext;
+	
+	public Miscellanius(Context context) {
+		mContext = context;
+	}
 
 	/**
 	 * Shows the default user soft keyboard.
 	 * @param mTextView
 	 */
-	protected static void showKeyboard(Context context, EditText mTextView) {
+	public static void showKeyboard(Context context, EditText mTextView) {
 		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null) {
 			// only will trigger it if no physical keyboard is open
@@ -34,9 +41,10 @@ public abstract class Miscellanius {
 
 	/**
 	 * Closes the default user soft keyboard.
+	 * @param context
 	 * @param searchView
 	 */
-	protected static void closeKeyboard(Context context, SearchView searchView) {
+	public static void closeKeyboard(Context context, SearchView searchView) {
 		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		if (imm != null) {
 			// only will trigger it if no physical keyboard is open
@@ -45,6 +53,68 @@ public abstract class Miscellanius {
 	}
 
 
+	/**
+	 * Closes the default user soft keyboard.
+	 * @param context
+	 * @param editText
+	 */
+	public static void closeKeyboard(Context context, EditText editText) {
+		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		if (imm != null) {
+			// only will trigger it if no physical keyboard is open
+			imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+		}	
+	}
+	
+	/**
+	 * Displays the default Progress Dialog.
+	 * @param mMessage
+	 */
+	public void showProgressDialog(String mMessage,boolean cancable, DialogInterface.OnCancelListener progressDialogCancelListener) {
+		// lazy initialize
+		if(pd==null)
+		{
+			// Setup the Progress Dialog
+			pd = new ProgressDialog(mContext);
+			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pd.setMessage(mMessage);
+			pd.setIndeterminate(true);
+			pd.setCancelable(cancable);
+			pd.setOnCancelListener(progressDialogCancelListener);
+		}
+		pd.show();
+	}
+
+	/**
+	 * Dismisses the Progress Dialog.
+	 */
+	public void dismissProgressDialog() {
+		if(pd!=null)
+			pd.dismiss();
+	}
+	
+	/**
+	 * Displays a basic Alert Dialog.
+	 * @param mMessage
+	 */
+	public void showAlertDialog(String mMessage) {
+		// lazy initialize
+		if(builder==null)
+		{
+			builder = new AlertDialog.Builder(mContext);
+			builder.setCancelable(true);
+			builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+		}
+		dismissProgressDialog();
+		builder.setMessage(mMessage);
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 
 	public static boolean useProxy() {
 		ConnectivityManager connManager = (ConnectivityManager) MyVolley.getAppContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -64,7 +134,8 @@ public abstract class Miscellanius {
 			        }
 			    };
 			    Authenticator.setDefault(authenticator);
-				return false;
+				//return true;
+			    return false;
 			}
 			else
 				return false;

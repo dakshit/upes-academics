@@ -30,6 +30,8 @@ public class MyOkHttpStack extends OkHttpStack{
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.ddn.upes.ac.in", 8080));
 			client.setProxy(proxy);
 		}
+		else
+			client.setProxy(null);
 		return client.open(url);			
 	} 
 }

@@ -87,13 +87,13 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 		String sapid = etSapid.getText().toString();
 		String password = etPass.getText().toString();	
 
-		if(sapid.isEmpty() || sapid.length()!=9) {
+		if(sapid.length()==0 || sapid.length()!=9) {
 			etSapid.requestFocus();
 			etSapid.setError("SAP ID should be of 9 digits");
 			Miscellanius.showKeyboard(this,etSapid);
 			return false;
 		}
-		else if (password.isEmpty()) {
+		else if (password.length()==0) {
 			etPass.requestFocus();
 			etPass.setError("Password cannot be empty");
 			Miscellanius.showKeyboard(this,etPass);
@@ -118,7 +118,7 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 		final EditText Captxt = (EditText) dialogView.findViewById(R.id.etCapTxt);
 		dialog.dismiss();
 
-		if (!Captxt.getText().toString().isEmpty()) {
+		if (Captxt.getText().toString().length()==6) {
 
 			new UserAccount(Login.this)
 			.Login(etSapid.getText().toString(), 
@@ -127,7 +127,7 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 					data);		
 		}
 		else {
-			Crouton.makeText(Login.this,  "Captcha cannot be empty", Style.ALERT).show();
+			Crouton.makeText(Login.this,  "Captcha must be of 6 digits", Style.ALERT).show();
 		}
 
 	}
