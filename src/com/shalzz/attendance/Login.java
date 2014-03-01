@@ -15,7 +15,6 @@ import com.android.volley.Request.Priority;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.Request.Method;
-import com.android.volley.toolbox.StringRequest;
 import com.shalzz.attendance.R;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -109,6 +108,10 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 	public void showCaptchaDialog() {
 		DialogFragment dialog = new CaptchaDialogFragment();
 		dialog.show(getSupportFragmentManager(), "CaptchaDialogFragment");
+
+		Dialog dialogView = dialog.getDialog();
+		final EditText Captxt = (EditText) dialogView.findViewById(R.id.etCapTxt);
+		Miscellanius.showKeyboard(this, Captxt);
 	}
 
 	@Override
@@ -116,27 +119,23 @@ public class Login extends SherlockFragmentActivity implements CaptchaDialogFrag
 
 		Dialog dialogView = dialog.getDialog();
 		final EditText Captxt = (EditText) dialogView.findViewById(R.id.etCapTxt);
-		dialog.dismiss();
-
-		if (Captxt.getText().toString().length()==6) {
-
+		
+			if(data.isEmpty())
+				getHiddenData();
 			new UserAccount(Login.this)
 			.Login(etSapid.getText().toString(), 
 					etPass.getText().toString(),
 					Captxt.getText().toString(),
 					data);		
-		}
-		else {
-			Crouton.makeText(Login.this,  "Captcha must be of 6 digits", Style.ALERT).show();
-		}
-
+			Miscellanius.closeKeyboard(this, Captxt);
+			dialog.dismiss();
 	}
 
 	private void getHiddenData()
 	{
 		Log.i(getClass().getName(),"Collecting hidden data...");
-		String mURL = "https://academics.ddn.upes.ac.in/upes/";
-		StringRequest request = new StringRequest(Method.GET,
+		String mURL = getResources().getString(R.string.URL_home);
+		MyStringRequest request = new MyStringRequest(Method.GET,
 				mURL,
 				getHiddenDataSuccessListener(),
 				myErrorListener()) {

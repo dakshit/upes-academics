@@ -16,5 +16,9 @@
     <string name="incorrect_user_or_pass">alert(\'Incorrect username or password. Please try again.\'); window.history.go(-1);</string>
     <string name="description">© 2013–2014 \n All rights reserved. \n Developed by  \n Shaleen Jain </string>
     <string name="contact">Contact Us:\n shaleen.jain95@gmail.com \n www.groupofdevelopers.com</string>
-    <dimen name="progress_bar_height">10dp</dimen>
+    <string name="URL_login">https://academics.ddn.upes.ac.in/upes/index.php</string>
+    <string name="URL_logout">https://academics.ddn.upes.ac.in/upes/index.php?option=logout</string>
+    <string name="URL_home">https://academics.ddn.upes.ac.in/upes/</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_password">This password is too short</string>
 </resources>

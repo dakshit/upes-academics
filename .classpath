@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/shalzz/Documents/Work Space/jsoup-1.7.3.jar" sourcepath="C:/Users/shalzz/Documents/Work Space/jsoup-1.7.3-sources.jar">
+	<classpathentry exported="true" kind="lib" path="/home/shalzz/workspace/jsoup-1.7.3.jar" sourcepath="/home/shalzz/workspace/jsoup-1.7.3-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/C:/Users/shalzz/Documents/Work%20Space/jsoup-1.7.3-javadoc.jar!/org"/>
+			<attribute name="javadoc_location" value="jar:file:/home/shalzz/workspace/jsoup-1.7.3-javadoc.jar!/org"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/android-sdk-windows/platforms/android-15/android.jar">
+	<classpathentry kind="lib" path="/home/shalzz/Development/android-sdk/platforms/android-15/android.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="file:/C:/android-sdk-windows/docs/reference"/>
 		</attributes>
@@ -18,10 +16,12 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/Users/shalzz/Documents/Work Space/Attendance/libs/crouton-1.8.3.jar" sourcepath="C:/Users/shalzz/Documents/Work Space/Attendance/libs/crouton-1.8.3-sources.jar">
+	<classpathentry exported="true" kind="lib" path="/home/shalzz/workspace/Attendance/libs/crouton-1.8.3.jar" sourcepath="/home/shalzz/workspace/Attendance/libs/crouton-1.8.3-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/C:/Users/shalzz/Documents/Work%20Space/Attendance/libs/crouton-1.8.3-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/home/shalzz/workspace/Attendance/libs/crouton-1.8.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

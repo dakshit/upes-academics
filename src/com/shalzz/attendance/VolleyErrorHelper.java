@@ -69,6 +69,7 @@ public class VolleyErrorHelper {
 			case 404:
 			case 422:
 			case 401:
+			case 407:
 				return error.getMessage();
 
 			default:

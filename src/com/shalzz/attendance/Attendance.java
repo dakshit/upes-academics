@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.protocol.HTTP;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,12 +19,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockExpandableListActivity;
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuItem.OnActionExpandListener;
@@ -36,14 +34,13 @@ import com.android.volley.Request.Method;
 import com.android.volley.Request.Priority;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.haarman.listviewanimations.swinginadapters.prepared.AlphaInAnimationAdapter;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
-public class Attendance extends SherlockExpandableListActivity {
+public class Attendance extends SherlockListActivity {
 
-	private String charset = HTTP.ISO_8859_1;
 	private View footer;
 	private View header;
 	private Miscellanius misc = new Miscellanius(this);
@@ -54,17 +51,18 @@ public class Attendance extends SherlockExpandableListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.attenview);
 
-		ExpandableListView listview = getExpandableListView();
+		ListView listview = getListView();
 		LayoutInflater inflater = this.getLayoutInflater();
-
+		
+		
 		header=inflater.inflate(R.layout.list_header, null);
 		listview.addHeaderView(header);
 
 		footer=inflater.inflate(R.layout.list_footer, null);
 		listview.addFooterView(footer);
-
+		
 		setAttendance();
-		getAttendance();
+		//getAttendance(); // TODO: needed?
 	}
 
 	private void setAttendance() {
@@ -81,30 +79,14 @@ public class Attendance extends SherlockExpandableListActivity {
 				subjects = db.getAllOrderedSubjects();
 			else 
 				subjects = db.getAllSubjects();
-			final ExpandableListAdapter mAdapter = new ExpandableListAdapter(this,subjects);
-			final ExpandableListView listview = getExpandableListView();
-			setListAdapter(mAdapter);
+			ListView listview = getListView();
+			ExpandableListAdapter mAdapter = new ExpandableListAdapter(this,subjects);
+			AlphaInAnimationAdapter alphaInAnimationAdapter = new AlphaInAnimationAdapter(mAdapter);
+			alphaInAnimationAdapter.setAbsListView(listview);
+			alphaInAnimationAdapter.setInitialDelayMillis(500);
+			listview.setAdapter(alphaInAnimationAdapter);
 
-			if(expandLimit) {
-				listview.setOnGroupExpandListener(new OnGroupExpandListener() {
-					public void onGroupExpand(int groupPosition) {
-						int len = mAdapter.getGroupCount();
-						for (int i = 0; i < len; i++) {
-							if (i != groupPosition) {
-								listview.collapseGroup(i);
-							}
-						}
-					}
-				});
-			}
-			else
-			{
-				listview.setOnGroupExpandListener(new OnGroupExpandListener() {
-					public void onGroupExpand(int groupPosition) {
-						return;
-					}
-				});
-			}
+			//mAdapter.setLimit(expandLimit ? 1 : 0);
 		}
 	}
 
@@ -124,9 +106,6 @@ public class Attendance extends SherlockExpandableListActivity {
 		}
 		else if(percent<75.0) {
 			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_yellow));
-		}
-		else {
-			pbPercent.setProgressDrawable(getResources().getDrawable(R.drawable.progress_neon_green));
 		}
 		pbPercent.getProgressDrawable().setBounds(bounds);
 
@@ -151,14 +130,13 @@ public class Attendance extends SherlockExpandableListActivity {
 			misc.showProgressDialog("Loading your attendance...", true, pdCancelListener());
 
 		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631";
-		StringRequest request = new StringRequest(Method.POST,
+		MyStringRequest request = new MyStringRequest(Method.POST,
 				mURL,
 				createMyReqSuccessListener(),
 				myErrorListener()) {
 
 			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
 				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("Accept-Charset", charset);
 				headers.put("User-Agent", getString(R.string.UserAgent));
 				return headers;
 			};
@@ -185,7 +163,7 @@ public class Attendance extends SherlockExpandableListActivity {
 				Log.i(myTag, "Parsing response...");
 				Document doc = Jsoup.parse(response);
 				System.out.println(doc.text().toString());
-				System.out.println(doc.getElementsByTag("title").get(0).text());
+				Log.i("system.out",doc.text().toString());
 
 				Elements tddata = doc.select("td");
 
@@ -220,23 +198,23 @@ public class Attendance extends SherlockExpandableListActivity {
 								subjectName.add(element.text());
 							}
 							// for Classes Held
-							if ((i - 31) % 7 == 0) {
+							else if ((i - 31) % 7 == 0) {
 								claHeld.add(Float.parseFloat(element.text()));
 							}
 							// for Classes attended
-							if ((i - 32) % 7 == 0) {
+							else if ((i - 32) % 7 == 0) {
 								claAttended.add(Float.parseFloat(element.text()));
 							}
 							// for Dates Absent
-							if ((i - 33) % 7 == 0) {
+							else if ((i - 33) % 7 == 0) {
 								abDates.add(element.text());
 							}
 							// for attendance percentage
-							if ((i - 34) % 7 == 0) {
+							else if ((i - 34) % 7 == 0) {
 								percentage.add(Float.parseFloat(element.text()));
 							}
 							// for projected percentage
-							if ((i - 35) % 7 == 0) {
+							else if ((i - 35) % 7 == 0) {
 								projPer.add(element.text());
 							}
 						}
@@ -314,7 +292,7 @@ public class Attendance extends SherlockExpandableListActivity {
 			public boolean onMenuItemActionCollapse(MenuItem item) {
 				DatabaseHandler db = new DatabaseHandler(Attendance.this);
 				List<Subject> subjects = db.getAllOrderedSubjects();
-				setListAdapter(new ExpandableListAdapter(Attendance.this,subjects));
+				getListView().setAdapter(new ExpandableListAdapter(Attendance.this,subjects));
 				return true;  // Return true to collapse action view
 			}
 
@@ -337,7 +315,7 @@ public class Attendance extends SherlockExpandableListActivity {
 			public boolean onQueryTextChange(String arg0) {
 				DatabaseHandler db = new DatabaseHandler(Attendance.this);
 				List<Subject> subjects = db.getAllSubjectsLike(arg0);
-				setListAdapter(new ExpandableListAdapter(Attendance.this,subjects));
+				getListView().setAdapter(new ExpandableListAdapter(Attendance.this,subjects));
 				return false;
 			}
 		});

@@ -17,5 +17,16 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
+    
+    <style name="Theme.Myactionbar" parent="@style/Theme.Sherlock.Light.DarkActionBar">\
+        <item name="actionBarStyle">@style/ActionBar.Solid.Myactionbar</item>
+        
+     </style>
+    
+    <style name="ActionBar.Solid.Myactionbar" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="background">@drawable/ab_solid_myactionbar</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_myactionbar</item>
+        
+    </style>
 
 </resources>

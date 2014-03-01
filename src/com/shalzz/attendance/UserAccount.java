@@ -3,7 +3,6 @@ package com.shalzz.attendance;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.protocol.HTTP;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +19,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.Request.Method;
 import com.android.volley.Request.Priority;
-import com.android.volley.toolbox.StringRequest;
 import com.shalzz.attendance.R;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -28,7 +26,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 
 public class UserAccount {
-	private String charset = HTTP.ISO_8859_1;
 
 	private String mUsername;
 	private String mPassword;
@@ -64,16 +61,14 @@ public class UserAccount {
 		mCaptcha = captcha;
 		
 		misc.showProgressDialog("Logging in...", false, pdCancelListener());
-		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php";
-		StringRequest request = new StringRequest(Method.POST,
+		String mURL = mContext.getResources().getString(R.string.URL_login);
+		MyStringRequest request = new MyStringRequest(Method.POST,
 				mURL,
 				loginSuccessListener(),
 				myErrorListener()) {
 
 			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
 				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("Accept-Charset", charset);
-				headers.put("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
 				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
 				return headers;
 			};
@@ -152,8 +147,8 @@ public class UserAccount {
 		misc.showProgressDialog( "Logging out...", true, pdCancelListener());
 		Log.i(mContext.getClass().getName(), "Logging out...");
 
-		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=logout";
-		StringRequest request = new StringRequest(Method.POST,
+		String mURL = mContext.getResources().getString(R.string.URL_logout);
+		MyStringRequest request = new MyStringRequest(Method.POST,
 				mURL,
 				new Response.Listener<String>() {
 			@Override
@@ -165,8 +160,6 @@ public class UserAccount {
 
 			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
 				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("Accept-Charset", charset);
-				headers.put("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
 				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
 				return headers;
 			};
@@ -177,7 +170,7 @@ public class UserAccount {
 				params.put("option", "logout");
 				params.put("op2", "logout");
 				params.put("lang", "english");
-				params.put("return", "https://academics.ddn.upes.ac.in/upes/index.php");
+				params.put("return", mContext.getResources().getString(R.string.URL_home));
 				params.put("message", "0");
 				return params;
 			};
@@ -201,6 +194,10 @@ public class UserAccount {
 		((Activity) mContext).finish();
 	}
 
+	/**
+	 * Progress Dialog cancel Listener.
+	 * @return
+	 */
 	DialogInterface.OnCancelListener pdCancelListener() {
 		return new DialogInterface.OnCancelListener() {
 			@Override
@@ -213,18 +210,20 @@ public class UserAccount {
 
 	}
 	
+	/**
+	 * Logins in with new hidden data in case previous data is corrupted.
+	 */
 	private void LoginWithNewHiddenData()
 	{
 		Log.i(getClass().getName(),"Collecting hidden data...");
-		String mURL = "https://academics.ddn.upes.ac.in/upes/";
-		StringRequest request = new StringRequest(Method.GET,
+		String mURL = mContext.getResources().getString(R.string.URL_home);
+		MyStringRequest request = new MyStringRequest(Method.GET,
 				mURL,
 				getHiddenDataSuccessListener(),
 				myErrorListener()) {
 
 			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
 				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("Accept-Charset", charset);
 				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
 				return headers;
 			};

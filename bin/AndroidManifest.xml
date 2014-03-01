@@ -18,14 +18,7 @@
         android:allowClearUserData="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <receiver
-            android:name="com.shalzz.attendance.NetworkChangeReceiver"
-            android:label="NetworkChangeReceiver" >
-            <intent-filter>
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
+        android:theme="@style/AppTheme" android:hardwareAccelerated="true" android:testOnly="false" android:debuggable="true">
         <activity
             android:name="com.shalzz.attendance.Splash"
             android:label="@string/app_name"
@@ -49,7 +42,7 @@
         <activity
             android:name="com.shalzz.attendance.Attendance"
             android:label="Attendance"
-            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+            android:theme="@style/Theme.Myactionbar" >
             <intent-filter>
                 <action android:name="com.shalzz.attendance.DISPLAYATTEN" />
 
@@ -60,7 +53,7 @@
             android:parentActivityName="com.shalzz.attendance.Attendance"
             android:name="com.shalzz.attendance.Settings"
             android:label="Settings"
-            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+            android:theme="@style/Theme.Myactionbar" >
 
             <!-- Parent activity meta-data to support API level 7+ -->
             <meta-data
@@ -71,7 +64,7 @@
             android:parentActivityName="com.shalzz.attendance.Settings"
             android:name="com.shalzz.attendance.AboutUs"
             android:label="About"
-            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+            android:theme="@style/Theme.Myactionbar" >
             <intent-filter>
                 <action android:name="com.shalzz.attendance.ABOUT" />
 

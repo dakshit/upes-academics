@@ -59,11 +59,8 @@ public class CaptchaDialogFragment extends DialogFragment{
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-		// Get the layout inflater
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-
-		// Inflate and set the layout for the dialog
-		// Pass null as the parent view because its going in the dialog layout
+		
 		builder.setView(inflater.inflate(R.layout.captcha_dialog, null))
 		.setTitle("Input Captcha")
 		.setIcon(R.drawable.ic_menu_edit)
@@ -71,12 +68,35 @@ public class CaptchaDialogFragment extends DialogFragment{
 		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int id) {
-				// Send the positive button event back to the host activity
 				mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
 			}
 		});    
+		
+		final AlertDialog d = builder.create(); 
+		d.setOnShowListener(new DialogInterface.OnShowListener() {
 
-		return builder.create();
+		    @Override
+		    public void onShow(DialogInterface dialog) {
+
+		        Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+		        b.setOnClickListener(new View.OnClickListener() {
+
+		            @Override
+		            public void onClick(View view) {
+	            		EditText captxt = (EditText) d.findViewById(R.id.etCapTxt);
+		            	if (captxt.getText().toString().length()!=6) {
+		            		captxt.setError("Captcha must be of 6 digits");
+		            		Miscellanius.showKeyboard(getActivity(), captxt);
+		            	}
+		            	else
+		            		mListener.onDialogPositiveClick(CaptchaDialogFragment.this);
+		            }
+		        });
+		    }
+		});
+		
+		
+		return d;
 	}
 
 	/**

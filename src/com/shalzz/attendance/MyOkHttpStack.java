@@ -6,6 +6,7 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.Proxy;
 
+import android.util.Log;
 import com.android.volley.toolbox.OkHttpStack;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -27,11 +28,15 @@ public class MyOkHttpStack extends OkHttpStack{
 	protected HttpURLConnection createConnection(URL url) throws IOException {
 		if(Miscellanius.useProxy())
 		{
+			Log.i("MyOkHttpStack","Using Proxy!");
 			Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.ddn.upes.ac.in", 8080));
 			client.setProxy(proxy);
 		}
-		else
+		else if(client.getProxy()!=null)
+		{
+			Log.i("MyOkHttpStack","Proxy removed!");
 			client.setProxy(null);
+		}
 		return client.open(url);			
 	} 
 }

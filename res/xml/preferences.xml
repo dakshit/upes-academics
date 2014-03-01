@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <PreferenceCategory
+        android:title="Proxy Authentication" >
+        <CheckBoxPreference 
+    	    android:key="pref_key_use_proxy"
+            android:title="Enable Proxy"
+            android:summary="Automatically set proxy when connected to UPESNET"
+            android:defaultValue="false"/>
+    	<EditTextPreference 
+    	    android:dependency="pref_key_use_proxy"
+    	    android:key="pref_key_proxy_username"
+    	    android:title="Username"
+    	    /> 
+    	<EditTextPreference 
+    	    android:dependency="pref_key_use_proxy"
+    	    android:key="pref_key_proxy_password"
+    	    android:title="Password"	      
+    		android:inputType="textPassword"
+    	    />
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="List" >
     <CheckBoxPreference 
         android:key="alpha_subject_order"
         android:title="Subject Order"
@@ -12,6 +34,7 @@
         android:title="Limit Expanded Subjects"
         android:summary="Allow only one subject to be expanded at a time."
         android:defaultValue="false"/>
+    </PreferenceCategory>
     
     <PreferenceCategory
         android:key="pref_key_storage_about"

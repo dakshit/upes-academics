@@ -44,7 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tvSubj"
         android:layout_alignBottom="@+id/tvSubj"
-        android:textColor="@android:color/darker_gray"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:textSize="18sp"

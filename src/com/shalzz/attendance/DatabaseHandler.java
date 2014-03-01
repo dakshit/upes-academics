@@ -16,22 +16,34 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-	// Database Version
+	/**
+	 * Database Version
+	 */
 	private static final int DATABASE_VERSION = 1;
 
-	// Database Name
+	/**
+	 * Database Name
+	 */
 	private static final String DATABASE_NAME = "attendanceManager";
 
-	// Attendance table name
+	/**
+	 *  Attendance table name
+	 */
 	private static final String TABLE_ATTENDENCE = "Attendance";
 
-	// ListHeader table name
+	/**
+	 * ListHeader table name
+	 */
 	private static final String TABLE_HEADER = "ListHeader";
 
-	// ListFooter table name
+	/**
+	 * ListFooter table name
+	 */
 	private static final String TABLE_FOOTER = "ListFooter";
 
-	// Attendance Table Columns names
+	/**
+	 * Attendance Table Columns names
+	 */
 	private static final String KEY_ID = "id";
 	private static final String KEY_NAME = "Subject_Name";
 	private static final String KEY_CLASSES_HELD = "No_Classes_Held";
@@ -40,7 +52,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_PERCENTAGE = "Percentage";
 	private static final String KEY_PROJECTED_PERCENTAGE = "Projected_Percentage";
 
-	// ListHeader Table Columns names
+	/**
+	 * ListHeader Table Columns names
+	 */
 	private static final String KEY_STU_NAME = "Student_Name";
 	private static final String KEY_FATHER_NAME = "Fathers_Name";
 	private static final String KEY_COURSE = "Course_Name";
@@ -48,27 +62,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_ROLLNO = "Rollno";
 	private static final String KEY_SAPID = "SAPId";
 
-	// ListFooter Table Column names
+	/**
+	 * ListFooter Table Column names
+	 */
 	private static final String KEY_SNO = "SNo";
 	private static final String KEY_TOTAL_HELD = "Classes_held";
 	private static final String KEY_TOTAL_ATTEND = "Classes_attend";
 	private static final String KEY_TOTAL_PERCANTAGE = "Percentage";
 
+	/**
+	 * Attendance CREATE TABLE SQL query.
+	 */
 	private static final String CREATE_ATTENDENCE_TABLE = "CREATE TABLE " + TABLE_ATTENDENCE + " ( "
 			+ KEY_ID + " INTEGER PRIMARY KEY, " + KEY_NAME + " TEXT, " 
 			+ KEY_CLASSES_HELD + " REAL, " + KEY_CLASSES_ATTENDED + " REAL, " 
 			+ KEY_DAYS_ABSENT + " TEXT, " + KEY_PERCENTAGE + " REAL, " 
 			+ KEY_PROJECTED_PERCENTAGE + "  TEXT " + ");";
-
+	
+	/**
+	 * ListHeader CREATE TABLE SQL query.
+	 */
 	private static final String CREATE_HEADER_TABLE = "CREATE TABLE " + TABLE_HEADER + " ( "
 			+ KEY_STU_NAME + " TEXT, " + KEY_FATHER_NAME + " TEXT, " 
 			+ KEY_COURSE + " TEXT, " + KEY_SECTION + " TEXT, " 
 			+ KEY_ROLLNO + " TEXT, " + KEY_SAPID + "  INTEGER PRIMARY KEY " + ");";
 
+	/**
+	 * ListFooter CREATE TABLE SQL query.
+	 */
 	private static final String CREATE_FOOTER_TABLE = "CREATE TABLE " + TABLE_FOOTER + " ( "
 			+ KEY_SNO + " INTEGER PRIMARY KEY, " + KEY_TOTAL_HELD + " REAL, " 
 			+ KEY_TOTAL_ATTEND + " REAL, " + KEY_TOTAL_PERCANTAGE + "  REAL " + ");";
 
+	/**
+	 * Constructor.
+	 */
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -125,25 +153,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void addOrUpdateSubject(Subject subject) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(KEY_NAME, subject.getName());
-		values.put(KEY_CLASSES_HELD, subject.getClassesHeld());
-		values.put(KEY_CLASSES_ATTENDED, subject.getClassesAttended());
-		values.put(KEY_DAYS_ABSENT, subject.getAbsentDates());
-		values.put(KEY_PERCENTAGE, subject.getPercentage());
-		values.put(KEY_PROJECTED_PERCENTAGE, subject.getProjectedPercentage());
-
 		Cursor cursor = db.query(TABLE_ATTENDENCE, new String[] { KEY_ID}, KEY_ID + "=?",
 				new String[] { String.valueOf(subject.getID()) }, null, null, null, null);
 		if (cursor.getCount() == 0)
 		{
-			values.put(KEY_ID, subject.getID());
-			db.insert(TABLE_ATTENDENCE, null, values);
+			addSubject(subject);
 		}
 		else
 		{
-			db.update(TABLE_ATTENDENCE, values, KEY_ID + " = ?",
-					new String[] { String.valueOf(subject.getID()) });
+			updateSubject(subject);
 		}
 		db.close(); // Closing database connection
 	}
@@ -353,8 +371,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		int rowCount = cursor.getCount();
 		db.close();
 		cursor.close();
-
-		// return row count
+		
 		return rowCount;
 	}
 
@@ -397,7 +414,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		else {
 			updateListHeader(header);
 		}
-		db.close(); // Closing database connection
+		db.close();
 	}
 
 	public ListHeader getListHeader() {

@@ -36,7 +36,6 @@ import org.apache.http.protocol.HTTP;
 /**
  * Custom SSLSocketFactory for managing SSL connections. 
  * @author shalzz
- *
  */
 public class MySSLSocketFactory extends SSLSocketFactory {
     private final SSLContext sslContext = SSLContext.getInstance("TLS");
