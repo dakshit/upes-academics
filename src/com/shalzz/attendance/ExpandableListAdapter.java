@@ -78,41 +78,65 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 		if (percent<67 && held!=0)
 		{
 			int x = (2*held) - (3*attend);
-			tvReach.setText("Attend "+x+" more classes to reach 67%");
-			tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_orange_light));
-			tvReach.setVisibility(View.VISIBLE);
-			ivAlert.setVisibility(View.VISIBLE);
+			switch(x)
+			{
+			case 0: 
+				tvReach.setVisibility(View.GONE);
+				ivAlert.setVisibility(View.GONE);
+				break;
+			case 1:
+				tvReach.setText("Attend 1 more class to reach 67%");
+				break;
+			default:
+				tvReach.setText("Attend "+x+" more classes to reach 67%");
+				tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_orange_light));
+				tvReach.setVisibility(View.VISIBLE);
+				ivAlert.setVisibility(View.VISIBLE);
+				break;
+			}
 		}
 		else if(percent<75 && held!=0)
 		{
 			int x = (3*held) - (4*attend);
-			tvReach.setText("Attend "+x+" more classes to reach 75%");
-			tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_orange_light));
-			tvReach.setVisibility(View.VISIBLE);
-			ivAlert.setVisibility(View.VISIBLE);
+			switch(x)
+			{
+			case 0: 
+				tvReach.setVisibility(View.GONE);
+				ivAlert.setVisibility(View.GONE);
+				break;
+			case 1:
+				tvReach.setText("Attend 1 more class to reach 75%");
+				break;
+			default:
+				tvReach.setText("Attend "+x+" more classes to reach 75%");
+				tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_orange_light));
+				tvReach.setVisibility(View.VISIBLE);
+				ivAlert.setVisibility(View.VISIBLE);
+				break;
+			}
 		}
 		else
 		{
 			int x = ((4*attend)/3)-held;
-			if(x<=0)
+			switch(x)
 			{
+			case 0:
 				tvReach.setVisibility(View.GONE);
 				ivAlert.setVisibility(View.GONE);
-			}
-			else if(x==1)
-			{
-				tvReach.setText("You can safely miss "+x+" class");
+				break;
+			case 1:
+				tvReach.setText("You can safely miss 1 class");
 				tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_green_light));
 				tvReach.setVisibility(View.VISIBLE);
 				ivAlert.setVisibility(View.GONE);
-			}
-			else
-			{
+				break;
+			default:
 				tvReach.setText("You can safely miss "+x+" classes");
 				tvReach.setTextColor(myContext.getResources().getColor(R.color.holo_green_light));
 				tvReach.setVisibility(View.VISIBLE);
 				ivAlert.setVisibility(View.GONE);
-			}		
+				break;
+			}
 		}
 		return view;
 	}

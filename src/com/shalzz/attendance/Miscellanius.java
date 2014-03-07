@@ -21,7 +21,7 @@ import android.widget.Toast;
 public class Miscellanius {
 
 	private AlertDialog.Builder builder = null;
-	private MyProgressDialog pd = null;
+	private ProgressDialog pd = null;
 	private Context mContext;
 
 	public Miscellanius(Context context) {
@@ -76,11 +76,12 @@ public class Miscellanius {
 		if(pd==null)
 		{
 			// Setup the Progress Dialog
-			pd = new MyProgressDialog(mContext);
+			pd = new ProgressDialog(mContext);
 			pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			pd.setMessage(mMessage);
 			pd.setIndeterminate(true);
 			pd.setCancelable(cancable);
+			pd.setCanceledOnTouchOutside(false);
 			pd.setOnCancelListener(progressDialogCancelListener);
 		}
 		pd.show();
@@ -99,7 +100,7 @@ public class Miscellanius {
 	 * @param mMessage
 	 */
 	public void showAlertDialog(String mMessage) {
-		// lazy initialize
+		// lazy initialise
 		if(builder==null)
 		{
 			builder = new AlertDialog.Builder(mContext);
@@ -166,28 +167,5 @@ public class Miscellanius {
 			}
 		}
 		return false;
-	}
-}
-
-final class MyProgressDialog extends ProgressDialog {
-
-	private boolean cancel;
-
-	public MyProgressDialog(Context context) {
-		super(context);
-		this.setCancelable(false);
-	}
-
-	@Override
-	public void setCancelable(boolean value) {
-		cancel=value;
-	}
-
-	@Override
-	public void onBackPressed() {
-		if(cancel) {
-			this.setCancelable(true);
-			this.cancel();
-		}
 	}
 }
