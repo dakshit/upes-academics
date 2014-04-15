@@ -1,4 +1,4 @@
-package com.shalzz.attendance;
+package com.shalzz.attendance.wrapper;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

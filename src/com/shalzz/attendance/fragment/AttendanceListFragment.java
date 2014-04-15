@@ -1,6 +1,7 @@
 package com.shalzz.attendance.fragment;
 
 import java.util.List;
+
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -12,13 +13,14 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingRightInAnima
 import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.ExpandableListAdapter;
 import com.shalzz.attendance.Miscellaneous;
-import com.shalzz.attendance.MySyncManager;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
 import com.shalzz.attendance.model.ListFooter;
 import com.shalzz.attendance.model.ListHeader;
 import com.shalzz.attendance.model.Subject;
+import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import android.accounts.Account;
@@ -26,10 +28,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SyncStatusObserver;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +49,7 @@ public class AttendanceListFragment extends SherlockListFragment{
 	private Context mContext;
 	private Miscellaneous misc;
 	private String myTag ;
+	Object syncObserverHandle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -164,19 +169,14 @@ public class AttendanceListFragment extends SherlockListFragment{
 		if(db.getRowCount()<=0)
 			misc.showProgressDialog("Loading...", true, pdCancelListener());
 		// Pass the settings flags by inserting them in a bundle
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		Bundle settingsBundle = new Bundle();
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
 
-        Account mAccount = MySyncManager.getSyncAccount(mContext);
-        String AUTHORITY = MySyncManager.AUTHORITY;
-        
-        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
-        while(ContentResolver.isSyncActive(mAccount, AUTHORITY) || ContentResolver.isSyncPending(mAccount, AUTHORITY)){
-        	
-        }
-        misc.dismissProgressDialog();
-        setAttendance();
+		Account mAccount = MySyncManager.getSyncAccount(mContext);
+		String AUTHORITY = MySyncManager.AUTHORITY;
+
+		ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
 	}
 
 	DialogInterface.OnCancelListener pdCancelListener() {
@@ -260,10 +260,37 @@ public class AttendanceListFragment extends SherlockListFragment{
 		return super.onOptionsItemSelected(item);
 	}
 
+	private SyncStatusObserver syncStatusObserver = new SyncStatusObserver() {
+		@Override
+		public void onStatusChanged(int which) {
+			Account account = MySyncManager.getSyncAccount(mContext);
+
+			Log.d(myTag, "Sync status changed: " + which);
+
+			if (!ContentResolver.isSyncActive(account, MySyncManager.AUTHORITY) &&
+					!ContentResolver.isSyncPending(account, MySyncManager.AUTHORITY)) {
+				Log.d(myTag, "Sync finished, should refresh nao!!");
+				misc.dismissProgressDialog();
+				setAttendance();
+			}
+		}
+	};
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (syncObserverHandle != null) {
+			ContentResolver.removeStatusChangeListener(syncObserverHandle);
+			syncObserverHandle = null;
+		}
+	}
+
 	@Override
 	public void onResume() {
 		setAttendance();
 		super.onResume();
+		final int mask = ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING;
+		syncObserverHandle = ContentResolver.addStatusChangeListener(mask, syncStatusObserver);
 	}
 
 	@Override

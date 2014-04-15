@@ -1000,9 +1000,10 @@ containing a value of this type.
         public static final int list_item_bg_pressed=0x7f020083;
         public static final int list_selector=0x7f020084;
         public static final int progress_amber=0x7f020085;
-        public static final int progress_neon_green=0x7f020086;
-        public static final int progress_yellow=0x7f020087;
-        public static final int upes_logo=0x7f020088;
+        public static final int progress_green=0x7f020086;
+        public static final int progress_neon_green=0x7f020087;
+        public static final int progress_yellow=0x7f020088;
+        public static final int upes_logo=0x7f020089;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f090024;

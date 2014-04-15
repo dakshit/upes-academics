@@ -1,6 +1,7 @@
 package com.shalzz.attendance.fragment;
 
 import java.util.List;
+
 import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -19,12 +20,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.Miscellaneous;
-import com.shalzz.attendance.MySyncManager;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
 import com.shalzz.attendance.model.Day;
 import com.shalzz.attendance.model.Period;
+import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 
