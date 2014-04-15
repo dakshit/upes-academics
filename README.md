@@ -18,13 +18,28 @@ Open source Libraries used:
 
 Contribute
 ==========
-
+Please do! I'm happy to review and accept pull requests.
 Use [GitHub issues](https://github.com/Shalzz/upes-academics/issues) and [Pull Requests](https://github.com/Shalzz/upes-academics/pulls).
 
 Licensing
 ==========
 
-Please see the file called COPYING.
+	Copyright (C) 2013 - 2014 Shaleen Jain <shaleen.jain95@gmail.com>
+	
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	
+Please see the file called LICENSE for more details.
 
 [1]: https://play.google.com/store/apps/details?id=com.shalzz.attendance
 [2]: https://github.com/nhaarman/ListViewAnimations

@@ -1,3 +1,22 @@
+/*  
+ *    Copyright (C) 2013 - 2014 Shaleen Jain <shaleen.jain95@gmail.com>
+ *
+ *	  This file is part of UPES Academics.
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ **/    
+
 package com.shalzz.attendance.sync;
 
 import java.net.CookieHandler;
@@ -12,14 +31,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.Request.Method;
 import com.shalzz.attendance.DataAssembler;
 import com.shalzz.attendance.R;
-import com.shalzz.attendance.activity.LoginActivity;
 import com.shalzz.attendance.wrapper.MyPreferencesManager;
 import com.shalzz.attendance.wrapper.MyStringRequest;
 import com.shalzz.attendance.wrapper.MyVolley;
 import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.content.AbstractThreadedSyncAdapter;

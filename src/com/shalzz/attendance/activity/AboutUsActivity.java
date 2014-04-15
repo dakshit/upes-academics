@@ -1,7 +1,7 @@
-/*
- *    UPES Academics, android attendance application for University of Petroleum and Energy Studies
- *    Copyright (C) 2014  Shaleen Jain
- *    shaleen.jain95@gmail.com
+/*  
+ *    Copyright (C) 2013 - 2014 Shaleen Jain <shaleen.jain95@gmail.com>
+ *
+ *	  This file is part of UPES Academics.
  *
  *    This program is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-**/    
+ **/    
 
 package com.shalzz.attendance.activity;
 
