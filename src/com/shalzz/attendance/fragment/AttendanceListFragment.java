@@ -1,6 +1,7 @@
 package com.shalzz.attendance.fragment;
 
 import java.util.List;
+
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -12,13 +13,14 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingRightInAnima
 import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.ExpandableListAdapter;
 import com.shalzz.attendance.Miscellaneous;
-import com.shalzz.attendance.MySyncManager;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
 import com.shalzz.attendance.model.ListFooter;
 import com.shalzz.attendance.model.ListHeader;
 import com.shalzz.attendance.model.Subject;
+import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
+
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import android.accounts.Account;

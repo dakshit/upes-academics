@@ -287,9 +287,10 @@ int drawable list_item_bg_normal 0x7f020082
 int drawable list_item_bg_pressed 0x7f020083
 int drawable list_selector 0x7f020084
 int drawable progress_amber 0x7f020085
-int drawable progress_neon_green 0x7f020086
-int drawable progress_yellow 0x7f020087
-int drawable upes_logo 0x7f020088
+int drawable progress_green 0x7f020086
+int drawable progress_neon_green 0x7f020087
+int drawable progress_yellow 0x7f020088
+int drawable upes_logo 0x7f020089
 int id abs__action_bar 0x7f090024
 int id abs__action_bar_container 0x7f090023
 int id abs__action_bar_subtitle 0x7f090015
