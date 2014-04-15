@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     UPES Academics, android attendance application for University of Petroleum and Energy Studies
+     Copyright (C) 2014  Shaleen Jain
+     shaleen.jain95@gmail.com
+ 
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+ 
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+ 
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
     <!-- A light Holo shade of blue -->
     <color name="holo_blue_light">#ff33b5e5</color>
@@ -21,4 +40,9 @@
     <!-- A really bright Holo shade of blue -->
     <color name="holo_blue_bright">#ff00ddff</color>
     <color name="orange">#f34e1f</color>
+    <color name="white">#ffffff</color>
+    <color name="list_item_title">#fff</color>
+    <color name="list_background">#303030</color>
+    <color name="list_background_pressed">#25AAE1</color>
+    <color name="list_divider">#272727</color>
 </resources>

@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+     UPES Academics, android attendance application for University of Petroleum and Energy Studies
+     Copyright (C) 2014  Shaleen Jain
+     shaleen.jain95@gmail.com
+ 
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+ 
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+ 
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <resources>
 
     <string name="app_name">Upes Academics</string>
@@ -7,11 +26,13 @@
     <string name="menu_logout">Log Out</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="menu_help">Help</string>
     <string name="menu_search">Search</string>
     <string name="menu_share">Share</string>
     <string name="generic_server_down">It seems the web server is down or not responding.\nPlease try again later.</string>
     <string name="no_internet">Unable to establish a secure internet connection.</string>
     <string name="generic_error">Network Error occurred. Please try again later.</string>
+    <string name="proxy_error">Proxy Authentication failed. Please check your credentials</string>
     <string name="incorrect_captcha">alert(\'Please enter correct code.\'); window.history.go(-1);</string>
     <string name="incorrect_user_or_pass">alert(\'Incorrect username or password. Please try again.\'); window.history.go(-1);</string>
     <string name="description">© 2013–2014 \n All rights reserved. \n Developed by  \n Shaleen Jain </string>
@@ -21,4 +42,7 @@
     <string name="URL_home">https://academics.ddn.upes.ac.in/upes/</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_password">This password is too short</string>
+    <string name="pref_subjectLimit">Limit Expanded Subjects</string>
+    <string name="drawer_open">Navigation drawer opened</string>
+    <string name="drawer_close">Navigation drawer closed</string>
 </resources>

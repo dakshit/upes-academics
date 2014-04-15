@@ -1,3 +1,22 @@
+/*
+ *    UPES Academics, android attendance application for University of Petroleum and Energy Studies
+ *    Copyright (C) 2014  Shaleen Jain
+ *    shaleen.jain95@gmail.com
+ *
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/    
+
 package com.shalzz.attendance;
 
 import java.util.List;
@@ -12,6 +31,7 @@ import android.widget.TextView;
 
 import com.haarman.listviewanimations.itemmanipulation.ExpandableListItemAdapter;
 import com.shalzz.attendance.R;
+import com.shalzz.attendance.model.Subject;
 
 public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 
@@ -19,7 +39,7 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 	private List<Subject> mSubjects;
 
 	public ExpandableListAdapter(Context context,List<Subject> subjects) {
-		super(context,subjects);
+		super(context,R.layout.card, R.id.activity_expandablelistitem_title, R.id.activity_expandablelistitem_content, subjects);
 		myContext = context;
 		mSubjects = subjects;
 	}
@@ -55,8 +75,12 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 
 	@Override
 	public View getContentView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) myContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.list_child_item, null);
+		View view =convertView;
+		if(view==null)
+		{
+			LayoutInflater inflater = (LayoutInflater) myContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			view = inflater.inflate(R.layout.list_child_item, null);
+		}
 
 		TextView tvAbsent = (TextView) view.findViewById(R.id.tvAbsent);
 		TextView tvProjected = (TextView) view.findViewById(R.id.tvProjected);
@@ -75,8 +99,7 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 		tvProjected.setText(mSubjects.get(position).getProjectedPercentage());
 		tvAbsent.setText("Days Absent: "+mSubjects.get(position).getAbsentDates());		
 
-		if (percent<67 && held!=0)
-		{
+		if (percent<67 && held!=0) {
 			int x = (2*held) - (3*attend);
 			switch(x)
 			{
@@ -95,8 +118,7 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 				break;
 			}
 		}
-		else if(percent<75 && held!=0)
-		{
+		else if(percent<75 && held!=0) {
 			int x = (3*held) - (4*attend);
 			switch(x)
 			{
@@ -114,9 +136,7 @@ public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
 				ivAlert.setVisibility(View.VISIBLE);
 				break;
 			}
-		}
-		else
-		{
+		} else {
 			int x = ((4*attend)/3)-held;
 			switch(x)
 			{

@@ -23,5 +23,10 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/home/shalzz/Development/android-sdk/extras/google/analytics_sdk_v2/libGoogleAnalyticsV2.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/shalzz/Development/android-sdk/extras/google/analytics_sdk_v2/javadocs.zip!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

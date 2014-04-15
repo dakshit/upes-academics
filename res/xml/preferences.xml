@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory
+        android:title="NETWORK" >
+    <CheckBoxPreference 
+        android:key="data_sync"
+        android:title="Auto Refresh"
+        android:summary="Periodically sync your attendance"
+        android:defaultValue="true"/>
+    <ListPreference
+        android:key="data_sync_interval"
+        android:title="Refresh Interval"
+    	android:dependency="data_sync"
+        android:dialogTitle="Refresh Interval"
+        android:entries="@array/pref_data_sync_interval_entries"
+        android:entryValues="@array/pref_data_sync_interval_values"
+        android:defaultValue="2"
+        />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="Proxy Authentication" >
@@ -29,11 +47,14 @@
         android:summaryOn="Display subjects alphabetically"
         android:summaryOff="Display subjects chronologically"
         android:defaultValue="true"/>
-    <CheckBoxPreference 
+    <ListPreference
         android:key="subjects_expanded_limit"
-        android:title="Limit Expanded Subjects"
-        android:summary="Allow only one subject to be expanded at a time."
-        android:defaultValue="false"/>
+        android:title="@string/pref_subjectLimit"
+        android:dialogTitle="Limit expanded subjects to"
+        android:entries="@array/pref_subject_limit_entries"
+        android:entryValues="@array/pref_subject_limit_values"
+        android:defaultValue="0"
+        />
     </PreferenceCategory>
     
     <PreferenceCategory

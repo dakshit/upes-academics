@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     UPES Academics, android attendance application for University of Petroleum and Energy Studies
+     Copyright (C) 2014  Shaleen Jain
+     shaleen.jain95@gmail.com
+ 
+     This program is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+ 
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+ 
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+    <RelativeLayout   
+    android:id="@+id/activity_expandablelistitem_title"  
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" 
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tvSubj"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/tvClasses"
+        android:padding="5dp"
+        android:text="TextView"
+        android:textSize="23sp" />
+
+    <TextView
+        android:id="@+id/tvPercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvSubj"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="2dp"
+        android:text="100%"
+        android:textSize="20sp" />
+
+    <ProgressBar
+        android:id="@+id/pbPercent"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/progress_bar_height"
+        android:layout_below="@+id/tvSubj"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/tvPercent"
+        android:gravity="center_vertical"
+        android:progressDrawable="@drawable/progress_neon_green"
+        android:progress="80" />
+
+    <TextView
+        android:id="@+id/tvClasses"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvSubj"
+        android:layout_alignBottom="@+id/tvSubj"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:textSize="18sp"
+        android:text="0/0" />
+
+</RelativeLayout>
+
+    <RelativeLayout 
+    android:id="@+id/activity_expandablelistitem_content"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+    
+    <TextView
+        android:id="@+id/tvClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="5dp"
+        android:gravity="center"
+        android:text="You have attended 0 out of 0 classes"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvAbsent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvClass"
+        android:layout_toLeftOf="@+id/tvProjected"
+        android:paddingLeft="5dp"
+        android:text="Days Absent:"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvAbsent"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/ic_dialog_alert_holo_light" />
+
+    <TextView
+        android:id="@+id/tvProjected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvAbsent"
+        android:layout_alignBottom="@+id/tvAbsent"
+        android:textColor="@android:color/darker_gray"
+        android:layout_alignParentRight="true"
+        android:padding="5dp"
+        android:text="*99%" />
+
+    <TextView
+        android:id="@+id/tvReach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvAbsent"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="Attend x more classes to reach 75%"
+        android:textSize="15sp" />
+
+</RelativeLayout>
+
+</LinearLayout>
