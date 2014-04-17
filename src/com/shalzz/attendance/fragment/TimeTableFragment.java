@@ -21,12 +21,11 @@ package com.shalzz.attendance.fragment;
 
 import java.util.List;
 
-import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,10 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.shalzz.attendance.DataAPI;
+import com.shalzz.attendance.DataAssembler;
 import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.Miscellaneous;
 import com.shalzz.attendance.R;
@@ -45,6 +48,7 @@ import com.shalzz.attendance.model.Day;
 import com.shalzz.attendance.model.Period;
 import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
+import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -76,8 +80,11 @@ public class TimeTableFragment extends SherlockListFragment{
 	@Override
 	public void onStart() {
 		DatabaseHandler db = new DatabaseHandler(mContext);
-		if(db.getRowCountofTimeTable()<=0)
-			getTimeTable();
+		if(db.getRowCountofTimeTable()<=0) {
+			MySyncManager.addPeriodicSync(mContext);
+			DataAPI.getTimeTable(mContext, timeTableSuccessListener(), myErrorListener());
+			misc.showProgressDialog("Loading your TimeTable...", true, pdCancelListener());
+		}
 		else
 			setTimeTable();
 		
@@ -96,24 +103,6 @@ public class TimeTableFragment extends SherlockListFragment{
 			++i;
 		}
 		setListAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,PeriodArray ));
-	}
-	
-	public void getTimeTable() {
-		
-		// Pass the settings flags by inserting them in a bundle
-        Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-        Account mAccount = MySyncManager.getSyncAccount(mContext);
-        String AUTHORITY = MySyncManager.AUTHORITY;
-        
-        ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
-        while(ContentResolver.isSyncActive(mAccount, AUTHORITY) || ContentResolver.isSyncPending(mAccount, AUTHORITY)){
-        	
-        }
-        misc.dismissProgressDialog();
-        setTimeTable();
 	}
 	
 	DialogInterface.OnCancelListener pdCancelListener() {
@@ -154,17 +143,41 @@ public class TimeTableFragment extends SherlockListFragment{
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
+			DataAPI.getTimeTable(mContext, timeTableSuccessListener(), myErrorListener());
 			misc.showProgressDialog("Refreshing your TimeTable...", true, pdCancelListener());
-			getTimeTable();
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private Response.Listener<String> timeTableSuccessListener() {
+		return new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {				
+				DataAssembler.parseTimeTable(response,mContext);
+				misc.dismissProgressDialog();
+				setTimeTable();
+				Log.i(myTag,"Sync complete");
+			}
+		};
+	}
+
+	private Response.ErrorListener myErrorListener() {
+		return new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				misc.dismissProgressDialog();
+				String msg = MyVolleyErrorHelper.getMessage(error, mContext);
+				Crouton.makeText(getActivity(),  msg, Style.ALERT).show();
+				Log.e(myTag, msg);
+			}
+		};
 	}
 
 	@Override
 	public void onResume() {
-//		DatabaseHandler db = new DatabaseHandler(mContext);
-//		if(db.getRowCountofTimeTable()>0)
-//			setTimeTable();
+		DatabaseHandler db = new DatabaseHandler(mContext);
+		if(db.getRowCountofTimeTable()>0)
+			setTimeTable();
 		super.onResume();
 	}
 

@@ -32,7 +32,7 @@ public class Period {
 	private String day;
 
 	public Period() {
-		
+
 	}
 
 	Period (int _id, String id, String name, String room, String teacher, int start, int end, boolean isBreak, String day) {
@@ -63,26 +63,26 @@ public class Period {
 	public int getStartTime() {
 		return start;
 	}
-	
+
 	public int getEndTime() {
 		return end;
 	}
-	
+
 	public String getTime() {
 		return time;
 	}
-	
+
 	public String getDay() {
 		return day;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
 
 	public void setName(String name) {
 		if(name.equals("***"))
-			this.name = "";
+			name = "";
 		this.name = name;
 	}
 
@@ -97,12 +97,12 @@ public class Period {
 	public void setTime(String time) {
 		this.time = "`" + time + "`";
 	}
-	
+
 	public void setTime(int start, int end) {
 		this.start = start;
 		this.end = end;
 	}
-	
+
 	public void setDay(String day ) {
 		this.day = day;
 	}

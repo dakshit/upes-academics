@@ -13,12 +13,14 @@ Open source Libraries used:
 - [ActionBar Sherlock][3]
 - [Android Volley with okHttp][4]
 	- [OkHttp][5]
-	- [OkHttp Stack][6]
+	- [OkHttp Stack implementation for Volley][6]
 - [Preference Fragment compatibility][7]
+- [Jsoup][8] (Jar included in \libs)
+- [Crouton][9] (Jar included in \libs)
 
 Contribute
 ==========
-Please do! I'm happy to review and accept pull requests.
+Please do! I'm happy to review and accept pull requests.<br>
 Use [GitHub issues](https://github.com/Shalzz/upes-academics/issues) and [Pull Requests](https://github.com/Shalzz/upes-academics/pulls).
 
 Licensing
@@ -48,3 +50,5 @@ Please see the file called LICENSE for more details.
 [5]: http://square.github.io/okhttp/#download
 [6]: https://gist.github.com/JakeWharton/5616899
 [7]: https://github.com/kolavar/android-support-v4-preferencefragment
+[8]: http://jsoup.org/download
+[9]: https://github.com/keyboardsurfer/Crouton

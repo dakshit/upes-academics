@@ -28,7 +28,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.MenuItem.OnActionExpandListener;
 import com.actionbarsherlock.widget.SearchView;
 import com.actionbarsherlock.widget.SearchView.OnQueryTextListener;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingRightInAnimationAdapter;
+import com.shalzz.attendance.DataAPI;
+import com.shalzz.attendance.DataAssembler;
 import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.ExpandableListAdapter;
 import com.shalzz.attendance.Miscellaneous;
@@ -39,15 +43,13 @@ import com.shalzz.attendance.model.ListHeader;
 import com.shalzz.attendance.model.Subject;
 import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
+import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import android.accounts.Account;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SyncStatusObserver;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -112,8 +114,11 @@ public class AttendanceListFragment extends SherlockListFragment{
 	@Override
 	public void onStart() {
 		DatabaseHandler db = new DatabaseHandler(mContext);
-		if(db.getRowCount()<=0)
-			MySyncManager.setupSync(mContext);
+		if(db.getRowCount()<=0) {
+			MySyncManager.addPeriodicSync(mContext);
+			DataAPI.getAttendance(mContext, successListener(), errorListener());
+			misc.showProgressDialog("Loading your attendance...", true, pdCancelListener());
+		}
 		else
 			setAttendance();
 		super.onStart();
@@ -181,21 +186,6 @@ public class AttendanceListFragment extends SherlockListFragment{
 		TextView tv_course = (TextView) Drawerheader.findViewById(R.id.drawer_header_course);
 		tv_name.setText(listheader.getName());
 		tv_course.setText(listheader.getCourse());
-	}
-
-	public void getAttendance() {
-		DatabaseHandler db = new DatabaseHandler(mContext);
-		if(db.getRowCount()<=0)
-			misc.showProgressDialog("Loading...", true, pdCancelListener());
-		// Pass the settings flags by inserting them in a bundle
-		Bundle settingsBundle = new Bundle();
-		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-
-		Account mAccount = MySyncManager.getSyncAccount(mContext);
-		String AUTHORITY = MySyncManager.AUTHORITY;
-
-		ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
 	}
 
 	DialogInterface.OnCancelListener pdCancelListener() {
@@ -273,43 +263,39 @@ public class AttendanceListFragment extends SherlockListFragment{
 		}
 		else if(item.getItemId() == R.id.menu_refresh)
 		{
+			DataAPI.getAttendance(mContext, successListener(), errorListener());
 			misc.showProgressDialog("Refreshing your attendance...", true, pdCancelListener());
-			getAttendance();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	private SyncStatusObserver syncStatusObserver = new SyncStatusObserver() {
-		@Override
-		public void onStatusChanged(int which) {
-			Account account = MySyncManager.getSyncAccount(mContext);
-
-			Log.d(myTag, "Sync status changed: " + which);
-
-			if (!ContentResolver.isSyncActive(account, MySyncManager.AUTHORITY) &&
-					!ContentResolver.isSyncPending(account, MySyncManager.AUTHORITY)) {
-				Log.d(myTag, "Sync finished, should refresh nao!!");
+	private Response.Listener<String> successListener() {
+		return new Response.Listener<String>() {
+			@Override
+			public void onResponse(String response) {				
 				misc.dismissProgressDialog();
+				DataAssembler.parseAttendance(response,mContext);
 				setAttendance();
 			}
-		}
-	};
+		};
+	}
 
-	@Override
-	public void onPause() {
-		super.onPause();
-		if (syncObserverHandle != null) {
-			ContentResolver.removeStatusChangeListener(syncObserverHandle);
-			syncObserverHandle = null;
-		}
+	private Response.ErrorListener errorListener() {
+		return new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				misc.dismissProgressDialog();
+				String msg = MyVolleyErrorHelper.getMessage(error, mContext);
+				Crouton.makeText(getActivity(),  msg, Style.ALERT).show();
+				Log.e(myTag, msg);
+			}
+		};
 	}
 
 	@Override
 	public void onResume() {
 		setAttendance();
 		super.onResume();
-		final int mask = ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE | ContentResolver.SYNC_OBSERVER_TYPE_PENDING;
-		syncObserverHandle = ContentResolver.addStatusChangeListener(mask, syncStatusObserver);
 	}
 
 	@Override

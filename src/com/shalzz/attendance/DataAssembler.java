@@ -58,7 +58,6 @@ public class DataAssembler {
 
 		Log.i(mTag, "Parsing response...");
 		Document doc = Jsoup.parse(response);
-		Log.i("Get attendance",doc.text().toString());
 
 		Elements tddata = doc.select("td");
 

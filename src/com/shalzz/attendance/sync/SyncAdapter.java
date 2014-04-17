@@ -19,21 +19,10 @@
 
 package com.shalzz.attendance.sync;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.Request.Method;
+import com.shalzz.attendance.DataAPI;
 import com.shalzz.attendance.DataAssembler;
-import com.shalzz.attendance.R;
-import com.shalzz.attendance.wrapper.MyPreferencesManager;
-import com.shalzz.attendance.wrapper.MyStringRequest;
-import com.shalzz.attendance.wrapper.MyVolley;
 import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
 import android.accounts.Account;
@@ -65,9 +54,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 		 * from the incoming Context
 		 */
 		mContext = context;
-		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
-		MyPreferencesManager settings = new MyPreferencesManager(mContext);
-		settings.getPersistentCookies();
 	}
 
 	/**
@@ -92,46 +78,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	public void onPerformSync(Account account, Bundle extras, String authority,
 			ContentProviderClient provider, SyncResult syncResult) {
 		Log.i(myTag,"Running sync adapter");
-		
-		String mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_stuattendance&task='view'&Itemid=7631";
-		MyStringRequest requestAttendance = new MyStringRequest(Method.POST,
-				mURL,
-				attendanceSuccessListener(),
-				myErrorListener()) {
 
-			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
-				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
-				return headers;
-			};
-		};
-		requestAttendance.setShouldCache(true);
-		requestAttendance.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		
-		mURL = "https://academics.ddn.upes.ac.in/upes/index.php?option=com_course_report&Itemid=7794";
-		MyStringRequest requestTimeTable = new MyStringRequest(Method.POST,
-				mURL,
-				timeTableSuccessListener(),
-				myErrorListener()) {
-
-			protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("fromdate", "07-04-2014");
-				params.put("submit","Show Result");
-				return params;
-			};
-			
-			public Map<String, String> getHeaders() throws com.android.volley.AuthFailureError {
-				Map<String, String> headers = new HashMap<String, String>();
-				headers.put("User-Agent", mContext.getString(R.string.UserAgent));
-				return headers;
-			};
-		};
-		requestTimeTable.setShouldCache(true);
-		requestTimeTable.setRetryPolicy(new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS, 3, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-		
-		MyVolley.getInstance().addToRequestQueue(requestAttendance ,myTag);
-		MyVolley.getInstance().addToRequestQueue(requestTimeTable ,myTag);
+		DataAPI.getAttendance(mContext, attendanceSuccessListener(), myErrorListener());
+		DataAPI.getTimeTable(mContext, timeTableSuccessListener(), myErrorListener());
 	}   
 	
 	private Response.Listener<String> attendanceSuccessListener() {
@@ -158,7 +107,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				String msg = MyVolleyErrorHelper.getMessage(error, mContext);
-				//Crouton.makeText((Activity)mContext,  msg, Style.ALERT).show();
 				Log.e(myTag, msg);
 			}
 		};

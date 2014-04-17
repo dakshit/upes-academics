@@ -31,6 +31,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageLoader.ImageCache;
 import com.android.volley.toolbox.Volley;
 import com.shalzz.attendance.R;
+
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -83,6 +84,8 @@ public class MyVolley extends Application {
 		// Set a cookie manager
 		Log.i(MyVolley.class.getName(), "Setting CookieHandler");
 		CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+		MyPreferencesManager settings = new MyPreferencesManager(mContext);
+		settings.getPersistentCookies();
 	}
 	
 	/**

@@ -21,6 +21,8 @@ package com.shalzz.attendance.fragment;
 
 import com.shalzz.attendance.FeedbackUtils;
 import com.shalzz.attendance.R;
+import com.shalzz.attendance.wrapper.MySyncManager;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -83,6 +85,7 @@ public class SettingsFragment extends PreferenceFragment implements OnPreference
         else if(key.equals("data_sync_interval")) {
             ListPreference connectionPref = (ListPreference) findPreference(key);
             connectionPref.setSummary(connectionPref.getEntry());
+    		MySyncManager.addPeriodicSync(mContext);
         }
     }
 

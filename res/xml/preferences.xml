@@ -6,7 +6,7 @@
     <CheckBoxPreference 
         android:key="data_sync"
         android:title="Auto Refresh"
-        android:summary="Periodically sync your attendance"
+        android:summary="Periodically sync your attendance and timetable"
         android:defaultValue="true"/>
     <ListPreference
         android:key="data_sync_interval"
@@ -15,7 +15,7 @@
         android:dialogTitle="Refresh Interval"
         android:entries="@array/pref_data_sync_interval_entries"
         android:entryValues="@array/pref_data_sync_interval_values"
-        android:defaultValue="2"
+        android:defaultValue="180"
         />
     </PreferenceCategory>
 

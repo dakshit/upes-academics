@@ -31,7 +31,6 @@ import android.util.Log;
 public class MySyncManager {
 
 	// Sync interval constants
-	public static final long MILLISECONDS_PER_SECOND = 1000L;
 	public static final long SECONDS_PER_MINUTE = 60L;
 	public static final String AUTHORITY = "com.shalzz.attendance.provider";
 	public static final String ACCOUNT_TYPE = "com.shalzz";
@@ -66,6 +65,8 @@ public class MySyncManager {
 	public static Account getSyncAccount(Context mContext) {
 		AccountManager accountManager = AccountManager.get(mContext);
 		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
+		if(accounts.length==0)
+			return null;
 		return accounts[0];
 	}
 
@@ -73,26 +74,29 @@ public class MySyncManager {
 		AccountManager accountManager = AccountManager.get(mContext);
 		accountManager.removeAccount(getSyncAccount(mContext),null, null);
 
-	}
-
-	public static void setupSync(Context mContext) {
+	}	
+	
+	public static void addPeriodicSync(Context mContext) {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 		final boolean sync = sharedPref.getBoolean("data_sync", false);
 		Log.d(mTag,"Enable sync: "+sync);
 		final long SYNC_INTERVAL_IN_MINUTES = Long.parseLong(sharedPref.getString("data_sync_interval", "2"));
 		Log.d(mTag,"Sync Interval set to: "+SYNC_INTERVAL_IN_MINUTES);
-
-		Account mAccount = CreateSyncAccount(mContext);		
-		if(sync && mAccount!=null) 
+		
+		Account mAccount = getSyncAccount(mContext);
+		
+		if(mAccount==null)
+			mAccount = CreateSyncAccount(mContext);	
+		
+		if(sync) 
 		{	// Create the dummy account
 			Bundle settingsBundle = new Bundle();
 			final long SYNC_INTERVAL =
 					SYNC_INTERVAL_IN_MINUTES *
-					SECONDS_PER_MINUTE *
-					MILLISECONDS_PER_SECOND;
+					SECONDS_PER_MINUTE;
 
-			ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 			ContentResolver.setIsSyncable(mAccount, AUTHORITY, 1);
+			ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 			ContentResolver.addPeriodicSync(
 					mAccount,
 					AUTHORITY,
