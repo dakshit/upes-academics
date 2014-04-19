@@ -36,7 +36,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.fragment.AttendanceListFragment;
-import com.shalzz.attendance.fragment.PagerFragment;
+import com.shalzz.attendance.fragment.TimeTablePagerFragment;
 import com.shalzz.attendance.fragment.SettingsFragment;
 import com.shalzz.attendance.wrapper.MyVolley;
 
@@ -138,7 +138,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			fragment = new AttendanceListFragment();
 			break;
 		case 2:
-			fragment = new PagerFragment();
+			fragment = new TimeTablePagerFragment();
 			break;
 		case 3:
 			fragment = new SettingsFragment();

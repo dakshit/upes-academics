@@ -21,7 +21,6 @@
 <resources>
 
     <string name="app_name">Upes Academics</string>
-    <string name="app_version">1.0</string>
     <string name="UserAgent">Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36</string>
     <string name="menu_logout">Log Out</string>
     <string name="menu_settings">Settings</string>

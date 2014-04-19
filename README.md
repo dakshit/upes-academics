@@ -15,7 +15,7 @@ Open source Libraries used:
 	- [OkHttp][5]
 	- [OkHttp Stack implementation for Volley][6]
 - [Preference Fragment compatibility][7]
-- [Jsoup][8] (Jar included in \libs)
+- [Jsoup][8]
 - [Crouton][9] (Jar included in \libs)
 
 Contribute
@@ -41,7 +41,7 @@ Licensing
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
-Please see the file called LICENSE for more details.
+Please see the file called LICENSE.txt for more details.
 
 [1]: https://play.google.com/store/apps/details?id=com.shalzz.attendance
 [2]: https://github.com/nhaarman/ListViewAnimations

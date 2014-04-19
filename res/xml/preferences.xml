@@ -15,7 +15,7 @@
         android:dialogTitle="Refresh Interval"
         android:entries="@array/pref_data_sync_interval_entries"
         android:entryValues="@array/pref_data_sync_interval_values"
-        android:defaultValue="180"
+        android:defaultValue="360"
         />
     </PreferenceCategory>
 
@@ -62,7 +62,7 @@
         android:title="About" >
         <Preference
             android:key="pref_info_about"
-            android:title="About"
+            android:title="About the app"
             android:summary="Get to know about this app.">
             <intent android:action="com.shalzz.attendance.ABOUT" />
         </Preference>    
@@ -74,7 +74,7 @@
         <Preference
             android:key="pref_info_version"
             android:title="Build Version"
-            android:summary="@string/app_version" />
+            android:summary="v2.0-pre" />
     </PreferenceCategory>
 
 </PreferenceScreen>

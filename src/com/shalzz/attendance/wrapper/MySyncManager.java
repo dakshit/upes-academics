@@ -65,9 +65,9 @@ public class MySyncManager {
 	public static Account getSyncAccount(Context mContext) {
 		AccountManager accountManager = AccountManager.get(mContext);
 		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
-		if(accounts.length==0)
-			return null;
-		return accounts[0];
+		if(accounts.length==1)
+			return accounts[0];
+		return null;
 	}
 
 	public static void removeSyncAccount(Context mContext) {

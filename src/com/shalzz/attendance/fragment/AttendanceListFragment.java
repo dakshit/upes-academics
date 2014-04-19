@@ -34,10 +34,10 @@ import com.haarman.listviewanimations.swinginadapters.prepared.SwingRightInAnima
 import com.shalzz.attendance.DataAPI;
 import com.shalzz.attendance.DataAssembler;
 import com.shalzz.attendance.DatabaseHandler;
-import com.shalzz.attendance.ExpandableListAdapter;
 import com.shalzz.attendance.Miscellaneous;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
+import com.shalzz.attendance.adapter.ExpandableListAdapter;
 import com.shalzz.attendance.model.ListFooter;
 import com.shalzz.attendance.model.ListHeader;
 import com.shalzz.attendance.model.Subject;

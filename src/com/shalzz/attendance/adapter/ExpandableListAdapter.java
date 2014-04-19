@@ -17,7 +17,7 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/    
 
-package com.shalzz.attendance;
+package com.shalzz.attendance.adapter;
 
 import java.util.List;
 
