@@ -1,6 +1,7 @@
 package com.shalzz.attendance.adapter;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 
 import android.annotation.SuppressLint;
@@ -26,7 +27,8 @@ public class TimeTablePagerAdapter extends FragmentStatePagerAdapter {
 	public Fragment getItem(int position) {
 		DayFragment fragment = new DayFragment();
 		Bundle args = new Bundle();
-		args.putInt(DayFragment.ARG_WEEKDAY, DateHelper.getWeekday()+position);
+		Date today = DateHelper.getToDay();
+		args.putSerializable(DayFragment.ARG_DATE, DateHelper.addDays(today, -15+position));
 		fragment.setArguments(args);
 		
 		activeFragments.put(position, fragment);

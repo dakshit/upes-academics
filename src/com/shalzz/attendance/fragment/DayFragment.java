@@ -19,6 +19,7 @@
 
 package com.shalzz.attendance.fragment;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -40,8 +41,9 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 public class DayFragment extends SherlockListFragment {
 	
 	private Context mContext;
-	private String weekday = ""; 
+	private Date date = null;
 	public static final String ARG_WEEKDAY = "weekday";
+	public static final String ARG_DATE = "date";
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -82,13 +84,17 @@ public class DayFragment extends SherlockListFragment {
 	}
 
 	public String getWeekDay() {
-		if(weekday.isEmpty())
-			setWeekDay();
-		return weekday;
+		if(date == null)
+			setDate();
+		return DateHelper.getWeekday(date);
 	}
 	
-	public void setWeekDay() {
-		this.weekday = DateHelper.getWeekdayName(getArguments().getInt(ARG_WEEKDAY));
+	public void setDate() {
+		date = (Date) getArguments().getSerializable(ARG_DATE);
+	}
+	
+	public Date getDate() {
+		return date;
 	}
 	
 	@Override

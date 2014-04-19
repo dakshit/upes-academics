@@ -31,7 +31,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.shalzz.attendance.R;
@@ -48,7 +48,7 @@ public class MainActivity extends SherlockFragmentActivity {
 	private String[] mNavTitles;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
-	private CharSequence mDrawerTitle = "UPES Academics";
+	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 	private ActionBarDrawerToggle mDrawerToggle;
 
@@ -68,8 +68,9 @@ public class MainActivity extends SherlockFragmentActivity {
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		mTitle  = getTitle();
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+		final ActionBar actionbar = getSupportActionBar();
+		actionbar.setDisplayHomeAsUpEnabled(true);
+		actionbar.setHomeButtonEnabled(true);
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 				R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
@@ -77,14 +78,14 @@ public class MainActivity extends SherlockFragmentActivity {
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				getSupportActionBar().setTitle(mTitle);
+				actionbar.setTitle(mTitle);
 				supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				getSupportActionBar().setTitle(mDrawerTitle);
+				actionbar.setTitle(mDrawerTitle);
 				supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
 			}
 		};
@@ -96,7 +97,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			// on first time display view for first nav item
 			displayView(1);
 		}
-
+		
 		//getAttendance(); // TODO: needed?
 		//		
 		//		ViewTarget target = new ViewTarget(R.id.tvSubj,this);
@@ -156,8 +157,12 @@ public class MainActivity extends SherlockFragmentActivity {
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);
 			mDrawerList.setSelection(position);
+			mDrawerTitle = mNavTitles[position-1];
 			//mDrawerList.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.list_background_pressed));
-			setTitle(mNavTitles[position-1]);
+			if(position == 2)
+				setTitle("");
+			else
+				setTitle(mDrawerTitle);
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else {
 			Log.e(myTag, "Error in creating fragment");

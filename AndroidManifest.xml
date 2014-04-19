@@ -15,7 +15,7 @@
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="19" />
 
     <application
         android:name="com.shalzz.attendance.wrapper.MyVolley"
@@ -31,7 +31,7 @@
         android:syncable="true"/>
         <service
                 android:name="com.shalzz.attendance.sync.SyncService"
-                android:exported="true"
+                android:exported="false"
                 android:process=":sync">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
@@ -40,6 +40,7 @@
                     android:resource="@xml/syncadapter" />
         </service>
         <service
+            android:exported="false"
             android:name="com.shalzz.attendance.sync.AuthenticatorService">
         	<intent-filter>
            		 <action android:name="android.accounts.AccountAuthenticator"/>
@@ -68,7 +69,7 @@
         <activity
             android:name="com.shalzz.attendance.activity.MainActivity"
             android:label="Attendance"
-            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
+            android:theme="@style/Theme.MyDarkActionbar" >
         </activity>
         
         <activity			android:name = "com.shalzz.attendance.activity.AboutUsActivity"

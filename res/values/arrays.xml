@@ -20,6 +20,11 @@
 
 
 <resources>
+    <string-array name="action_list">
+        <item>Jump to date</item>
+        <item>Jump to today</item>
+    </string-array>
+    
     <string-array name="drawer_array">
         <item >My Attendance</item>
         <item >My TimeTable</item>
