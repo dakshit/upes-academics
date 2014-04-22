@@ -8,6 +8,7 @@ import android.content.Context;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.Request.Method;
+import com.shalzz.attendance.wrapper.DateHelper;
 import com.shalzz.attendance.wrapper.MyStringRequest;
 import com.shalzz.attendance.wrapper.MyVolley;
 
@@ -42,7 +43,8 @@ public class DataAPI {
 
 			protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
 				Map<String, String> params = new HashMap<String, String>();
-				params.put("fromdate", "07-04-2014");
+				String date = DateHelper.getNetworkRequestDate(DateHelper.getToDay());
+				params.put("fromdate", date);
 				params.put("submit","Show Result");
 				return params;
 			};
