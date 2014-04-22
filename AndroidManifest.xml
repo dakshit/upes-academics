@@ -69,7 +69,7 @@
         <activity
             android:name="com.shalzz.attendance.activity.MainActivity"
             android:label="Attendance"
-            android:theme="@style/Theme.MyDarkActionbar" >
+            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" >
         </activity>
         
         <activity			android:name = "com.shalzz.attendance.activity.AboutUsActivity"

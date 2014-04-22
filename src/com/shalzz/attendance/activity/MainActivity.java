@@ -19,6 +19,7 @@
 
 package com.shalzz.attendance.activity;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -27,17 +28,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.fragment.AttendanceListFragment;
 import com.shalzz.attendance.fragment.TimeTablePagerFragment;
 import com.shalzz.attendance.fragment.SettingsFragment;
+import com.shalzz.attendance.model.ListHeader;
 import com.shalzz.attendance.wrapper.MyVolley;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -51,6 +57,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private View Drawerheader;
+	public static MainActivity mActivity;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,10 +101,18 @@ public class MainActivity extends SherlockFragmentActivity {
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		Drawerheader = inflater.inflate(R.layout.drawer_header, null);
+		if(mDrawerList.getHeaderViewsCount()==0)
+			mDrawerList.addHeaderView(Drawerheader);
+
 		if (savedInstanceState == null) {
 			// on first time display view for first nav item
 			displayView(1);
 		}
+		
+		updateDrawerHeader();
+		mActivity =this;
 		
 		//getAttendance(); // TODO: needed?
 		//		
@@ -104,7 +120,23 @@ public class MainActivity extends SherlockFragmentActivity {
 		//		PointTarget pt = new PointTarget(20, 50);
 		//		ShowcaseView.insertShowcaseView(pt, this, "Details", "Touch a Subject for more details about it");
 	}
+	
+	public static MainActivity getInstance(){
+		   return mActivity;
+		 }
 
+	public void updateDrawerHeader() {
+		DatabaseHandler db = new DatabaseHandler(this);
+		if(db.getRowCount()>0) {
+		ListHeader listheader = db.getListHeader();
+		
+		TextView tv_name = (TextView) Drawerheader.findViewById(R.id.drawer_header_name);
+		TextView tv_course = (TextView) Drawerheader.findViewById(R.id.drawer_header_course);
+		tv_name.setText(listheader.getName());
+		tv_course.setText(listheader.getCourse());
+		}
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home)

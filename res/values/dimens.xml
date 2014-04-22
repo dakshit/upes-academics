@@ -26,4 +26,13 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="progress_bar_height">8dp</dimen>
+    
+    <!-- Text size for action bar titles -->
+    <dimen name="action_bar_title_text_size">18dp</dimen>
+    <!-- Text size for action bar subtitles -->
+    <dimen name="action_bar_subtitle_text_size">14dp</dimen>
+    <!-- Top margin for action bar subtitles -->
+    <dimen name="action_bar_subtitle_top_margin">-3dp</dimen>
+    <!-- Bottom margin for action bar subtitles -->
+    <dimen name="action_bar_subtitle_bottom_margin">5dip</dimen>
 </resources>

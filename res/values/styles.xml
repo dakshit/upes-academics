@@ -46,23 +46,4 @@
         <item name="backgroundStacked">@drawable/ab_stacked_solid_myactionbar</item>
     </style>
 
-    <style name="Theme.MyDarkActionbar" parent="@style/Theme.Sherlock.Light.DarkActionBar">
-        <item name="android:spinnerItemStyle" tools:targetApi="11">@style/MyApp.Widget.Sherlock.SpinnerItem</item>
-        <item name="spinnerItemStyle">@style/MyApp.Widget.Sherlock.SpinnerItem</item>
-    </style>
-
-    <style name="MyApp.Widget.Sherlock.SpinnerItem" parent="Widget.Sherlock.TextView.SpinnerItem">
-        <item name="android:textAppearance">@style/Custom.TextAppearance.Sherlock.Widget.TextView.SpinnerItem</item> 
-        <item name="android:padding">10dp</item>
-    </style>
-    
-    <style name="Custom.TextAppearance.Sherlock.Widget.TextView.SpinnerItem"  parent="TextAppearance.Sherlock.Widget.TextView.SpinnerItem">
-       <item name="android:textColor">@color/white</item>
-       <item name="android:shadowColor">#4ccfff</item>
-       <item name="android:shadowDy">3</item>
-       <item name="android:textStyle">normal</item>
-       <item name="android:textSize">16sp</item>
-        <item name="android:padding">10dp</item>
-   </style> 
-
 </resources>

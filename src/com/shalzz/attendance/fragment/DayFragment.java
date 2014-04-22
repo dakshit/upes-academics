@@ -71,7 +71,10 @@ public class DayFragment extends SherlockListFragment {
 	
 	public void setTimeTable() {
 		DatabaseHandler db = new DatabaseHandler(getActivity());
-		Day day = db.getDay(getWeekDay());
+		String weekday = getWeekDay();
+		if(weekday.equals("sun"))
+			return;
+		Day day = db.getDay(weekday);
 		String PeriodArray[] = new String[20]; ;
 		List<Period> periods = day.getAllPeriods();
 		int i =0;

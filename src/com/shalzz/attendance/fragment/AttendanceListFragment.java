@@ -37,6 +37,7 @@ import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.Miscellaneous;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
+import com.shalzz.attendance.activity.MainActivity;
 import com.shalzz.attendance.adapter.ExpandableListAdapter;
 import com.shalzz.attendance.model.ListFooter;
 import com.shalzz.attendance.model.ListHeader;
@@ -66,7 +67,6 @@ public class AttendanceListFragment extends SherlockListFragment{
 
 	private View footer;
 	private View header;
-	private View Drawerheader;
 	private Context mContext;
 	private Miscellaneous misc;
 	private String myTag ;
@@ -93,7 +93,6 @@ public class AttendanceListFragment extends SherlockListFragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		ListView listview = getListView();
-		ListView mDrawerList = (ListView) getActivity().findViewById(R.id.list_slidermenu);
 		LayoutInflater inflater = this.getLayoutInflater(savedInstanceState);
 
 		header = inflater.inflate(R.layout.list_header, null);
@@ -101,12 +100,6 @@ public class AttendanceListFragment extends SherlockListFragment{
 
 		footer=inflater.inflate(R.layout.list_footer, null);
 		listview.addFooterView(footer);	
-
-		Drawerheader = inflater.inflate(R.layout.drawer_header, null);
-		Drawerheader.setClickable(false);
-		Drawerheader.setEnabled(false);
-		if(mDrawerList.getHeaderViewsCount()==0)
-			mDrawerList.addHeaderView(Drawerheader);
 
 		super.onActivityCreated(savedInstanceState);
 	}
@@ -180,12 +173,9 @@ public class AttendanceListFragment extends SherlockListFragment{
 		tvName.setText(listheader.getName());
 		tvSap.setText(String.valueOf(listheader.getSAPId()));
 		tvcourse.setText(listheader.getCourse());
+		
+		MainActivity.getInstance().updateDrawerHeader();
 
-
-		TextView tv_name = (TextView) Drawerheader.findViewById(R.id.drawer_header_name);
-		TextView tv_course = (TextView) Drawerheader.findViewById(R.id.drawer_header_course);
-		tv_name.setText(listheader.getName());
-		tv_course.setText(listheader.getCourse());
 	}
 
 	DialogInterface.OnCancelListener pdCancelListener() {

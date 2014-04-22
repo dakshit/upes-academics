@@ -47,6 +47,7 @@ import com.shalzz.attendance.DatabaseHandler;
 import com.shalzz.attendance.Miscellaneous;
 import com.shalzz.attendance.R;
 import com.shalzz.attendance.UserAccount;
+import com.shalzz.attendance.adapter.MySpinnerAdapter;
 import com.shalzz.attendance.adapter.TimeTablePagerAdapter;
 import com.shalzz.attendance.wrapper.MySyncManager;
 import com.shalzz.attendance.wrapper.MyVolley;
@@ -70,10 +71,10 @@ public class TimeTablePagerFragment extends SherlockFragment{
 		mContext = getActivity();
 		misc  = new Miscellaneous(mContext);
 		actionbar= getSherlockActivity().getSupportActionBar();
+		actionbar.setDisplayShowTitleEnabled(false);
 
-		SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(mContext, R.array.action_list,
-				R.layout.sherlock_spinner_item);
-
+		SpinnerAdapter mSpinnerAdapter = new MySpinnerAdapter(mContext);
+		
 		OnNavigationListener mOnNavigationListener = new OnNavigationListener() {
 
 			@Override
@@ -88,7 +89,7 @@ public class TimeTablePagerFragment extends SherlockFragment{
 					return true;
 				}
 
-				return false;
+				return true;
 			}
 		};
 
@@ -140,10 +141,14 @@ public class TimeTablePagerFragment extends SherlockFragment{
 		menu.findItem(R.id.menu_refresh).setVisible(!drawerOpen);
 
 		// set the Navigation mode to standard
-		if(drawerOpen)
+		if(drawerOpen) {
 			actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-		else
+			actionbar.setDisplayShowTitleEnabled(true);
+		}
+		else {
 			actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+			actionbar.setDisplayShowTitleEnabled(false);
+		}
 
 		return;
 	}
