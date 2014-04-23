@@ -48,6 +48,7 @@ import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -150,7 +151,6 @@ public class AttendanceListFragment extends SherlockListFragment{
 		DatabaseHandler db = new DatabaseHandler(mContext);
 		ListFooter listfooter = db.getListFooter();
 		Float percent = listfooter.getPercentage();
-
 
 		Rect bounds = pbPercent.getProgressDrawable().getBounds();
 		if(percent<67.0) {
@@ -276,7 +276,7 @@ public class AttendanceListFragment extends SherlockListFragment{
 			public void onErrorResponse(VolleyError error) {
 				misc.dismissProgressDialog();
 				String msg = MyVolleyErrorHelper.getMessage(error, mContext);
-				Crouton.makeText(getActivity(),  msg, Style.ALERT).show();
+				Miscellaneous.makeCroutonInfinity((Activity)mContext, msg);
 				Log.e(myTag, msg);
 			}
 		};

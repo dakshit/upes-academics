@@ -21,9 +21,14 @@ package com.shalzz.attendance;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+
 import com.actionbarsherlock.widget.SearchView;
 import com.shalzz.attendance.wrapper.MyVolley;
 
+import de.keyboardsurfer.android.widget.crouton.Configuration;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,6 +40,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -138,6 +145,17 @@ public class Miscellaneous {
 		builder.setMessage(mMessage);
 		AlertDialog alert = builder.create();
 		alert.show();
+	}
+	
+	public static void makeCroutonInfinity(Activity activity, CharSequence msg) {
+		final Crouton c = Crouton.makeText(activity,  msg, Style.ALERT)
+				.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_INFINITE).build());
+				c.setOnClickListener(new OnClickListener() {			
+					@Override
+					public void onClick(View v) {
+						c.hide();
+					}
+				}).show();	
 	}
 
 	/**

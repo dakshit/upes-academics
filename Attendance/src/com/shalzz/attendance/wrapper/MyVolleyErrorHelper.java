@@ -37,7 +37,7 @@ public class MyVolleyErrorHelper {
 	 * 
 	 * @param error
 	 * @param context
-	 * @return
+	 * @return Error Message
 	 */
 	public static String getMessage(Object error, Context context) {
 		if (error instanceof TimeoutError) {

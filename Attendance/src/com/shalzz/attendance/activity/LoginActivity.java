@@ -44,9 +44,7 @@ import com.shalzz.attendance.wrapper.MyStringRequest;
 import com.shalzz.attendance.wrapper.MyVolley;
 import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 
-import de.keyboardsurfer.android.widget.crouton.Configuration;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import android.os.Bundle;
 import android.app.Dialog;
 import android.content.Intent;
@@ -54,7 +52,6 @@ import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -222,17 +219,7 @@ public class LoginActivity extends SherlockFragmentActivity implements CaptchaDi
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				String msg = MyVolleyErrorHelper.getMessage(error, LoginActivity.this);
-				final Crouton c = Crouton.makeText(LoginActivity.this,  msg, Style.ALERT)
-				.setConfiguration(new Configuration.Builder().setDuration(Configuration.DURATION_INFINITE).build());
-				c.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						c.hide();
-					}
-				});
-				c.show();
+				Miscellaneous.makeCroutonInfinity(LoginActivity.this, msg);
 				Log.e(getClass().getName(), msg);
 			}
 		};

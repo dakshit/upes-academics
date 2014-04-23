@@ -19,6 +19,7 @@
 
 package com.shalzz.attendance.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -227,7 +228,7 @@ public class TimeTablePagerFragment extends SherlockFragment{
 			public void onErrorResponse(VolleyError error) {
 				misc.dismissProgressDialog();
 				String msg = MyVolleyErrorHelper.getMessage(error, mContext);
-				Crouton.makeText(getActivity(),  msg, Style.ALERT).show();
+				Miscellaneous.makeCroutonInfinity((Activity)mContext, msg);
 				Log.e(myTag, msg);
 			}
 		};
