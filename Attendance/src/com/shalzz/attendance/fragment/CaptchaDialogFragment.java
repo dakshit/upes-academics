@@ -31,6 +31,7 @@ import com.shalzz.attendance.wrapper.MyVolleyErrorHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -44,12 +45,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CaptchaDialogFragment extends DialogFragment{
 
 	private ImageView ivCapImg;
 	private ProgressBar pbar;
 	private EditText Captxt;
+	private Context mContext;
 
 	// Use this instance of the interface to deliver action events
 	CaptchaDialogListener mListener;
@@ -65,6 +68,7 @@ public class CaptchaDialogFragment extends DialogFragment{
 	// Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
 	@Override
 	public void onAttach(Activity activity) {
+		mContext = activity;
 		super.onAttach(activity);
 		// Verify that the host activity implements the callback interface
 		try {
@@ -189,7 +193,8 @@ public class CaptchaDialogFragment extends DialogFragment{
 					view.setVisibility(View.VISIBLE);
 					view.setScaleType(ImageView.ScaleType.CENTER);
 					view.setImageResource(errorImageResId);
-					String msg = MyVolleyErrorHelper.getMessage(error, getActivity());
+					String msg = MyVolleyErrorHelper.getMessage(error, mContext);
+					Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
 					Log.e(getActivity().getClass().getName(), msg);
 				}
 			}
