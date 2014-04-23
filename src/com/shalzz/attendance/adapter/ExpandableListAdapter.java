@@ -29,7 +29,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nhaarman.listviewanimations.itemmanipulation.ExpandableListItemAdapter;
+import com.haarman.listviewanimations.itemmanipulation.ExpandableListItemAdapter;
+import com.shalzz.attendance.R;
 import com.shalzz.attendance.model.Subject;
 
 public class ExpandableListAdapter extends ExpandableListItemAdapter<Subject> {
