@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
+
+    <TextView
+        android:id="@+id/spinner_list_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="21/4/2014"
+        android:textColor="@color/white"
+        android:textSize="@dimen/action_bar_subtitle_text_size" />
+
+    <TextView
+        android:id="@+id/spinner_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/action_bar_subtitle_top_margin"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="Monday"
+        android:textSize="@dimen/action_bar_title_text_size"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+</LinearLayout>
